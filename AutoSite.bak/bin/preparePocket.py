@@ -3,7 +3,7 @@ from MolKit2 import Read
 import AutoSite
 from AutoSite.clusterNode import clusterNode
 from AutoSite.clusterNode import buildJSON
-from matchPocket import spheres2Grid
+from .matchPocket import spheres2Grid
 
 from time import time
 from math import sqrt
@@ -63,11 +63,11 @@ if __name__=='__main__':
     finaloutput.sort(key=lambda x: x.score, reverse=True)
     i=1
     for pocket in finaloutput:
-        print pocket.score,pocket.id,pocket.totalE,pocket.buriedness,pocket.rg,pocket.size,i
+        print(pocket.score,pocket.id,pocket.totalE,pocket.buriedness,pocket.rg,pocket.size,i)
         os.system('mv ./pockets/%03d.pdb ./pockets/ranked_%03d.pdb' % (pocket.id, i))
         os.system('cp *fp_%03d*pdb ./pockets/fp_%03d.pdb' %(pocket.id, i))
         i=i+1
 
 
-    print "pockets prepareation finished in ",time()-tt0," seconds"
+    print("pockets prepareation finished in ",time()-tt0," seconds")
     #import pdb; pdb.set_trace()

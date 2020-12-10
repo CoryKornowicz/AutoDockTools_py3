@@ -368,7 +368,7 @@ class AtomTypeSelector(QtGui.QDialog):
 
         self.atypeList = QtGui.QListWidget()
         self.items = []
-        for atype, checked in atomList.items():
+        for atype, checked in list(atomList.items()):
             item = QtGui.QListWidgetItem(atype)
             self.items.append(item)
             if checked:
@@ -898,7 +898,7 @@ class GridGUI(QtGui.QWidget):
                     sx = spacing*(nx-1)
                     sy = spacing*(ny-1)
                     sz = spacing*(nz-1)
-                    print 'ASDASda', mapFileName, center, sx, sy, sz
+                    print('ASDASda', mapFileName, center, sx, sy, sz)
                     flexResStr = _map.getFlexRes()
                     _mapLoaded = True
 
@@ -1152,7 +1152,7 @@ class GridGUI(QtGui.QWidget):
         self.paramsWidget.atypesLabel.setDisabled(False)
         d = {}
         atstr = self.paramsWidget.atypesLabel.text().split()
-        for at in self.ADAtomTypes.keys():
+        for at in list(self.ADAtomTypes.keys()):
             if at in atstr:
                 d[at] = True
             else:
@@ -1172,7 +1172,7 @@ class GridGUI(QtGui.QWidget):
         d = {}
         for atom in self.selectCAInBox():
             key = '%s:%s%d'%(atom.getChid(), atom.getResname(), atom.getResnum())
-            if df.has_key(key):
+            if key in df:
                 d[key] = True
             else:
                 d[key] = False
@@ -1185,11 +1185,11 @@ class GridGUI(QtGui.QWidget):
             chid = atom.getChid()
             resnum = atom.getResnum()
             resname = atom.getResname()
-            if not d.has_key(chid):
+            if chid not in d:
                 d[chid] = ['%s%d'%(atom.getResname(),atom.getResnum())]
             else:
                 d[chid].append('%s%d'%(atom.getResname(), atom.getResnum()))
-        chids = d.keys()
+        chids = list(d.keys())
         chids.sort()
         s = ''
         descr = []
@@ -1742,12 +1742,12 @@ class GridGUI(QtGui.QWidget):
             fresdict[xsplit[0]].append(xsplit[1])
 
         flexResStr = ''
-        for k,v in fresdict.iteritems():
+        for k,v in fresdict.items():
             resstr =  "".join(str(x)+',' for x in v)
             flexResStr = flexResStr+k+':'+resstr+';'
             
 
-        print flexResStr
+        print(flexResStr)
         self.paramsWidget.flexResWidget.setText(flexResStr)
         self.setFlexRes()
         #self.flexResChanged.emit() 
@@ -1878,7 +1878,7 @@ class GridGUI(QtGui.QWidget):
             return
 
         if self.paramsWidget.compAllButton.isChecked():
-            atypes = self.ADAtomTypes.keys()
+            atypes = list(self.ADAtomTypes.keys())
         else:
             atypes = [x.encode('ascii', 'replace') for x in self.paramsWidget.atypesLabel.text().split()]
 
@@ -1947,7 +1947,7 @@ class GridGUI(QtGui.QWidget):
 
         if not background:
             if status==0:
-                print 'Computed grids for %s in '%atypes, time()-t0
+                print('Computed grids for %s in '%atypes, time()-t0)
             else:
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setText("ERROR: running autogrid failed")

@@ -147,7 +147,7 @@ class DensityClustering:
         #import pdb
         #pdb.set_trace()
         ci = 0 # index of point in cluster
-        index = indices.values()[0]
+        index = list(indices.values())[0]
         i, j, k = ptsIndices[index] # first point
         cluster.append( index )
         indices.pop(index)
@@ -157,40 +157,40 @@ class DensityClustering:
             neighbors = [] # list of neighbors of current point
 
             # build list of grid points neighboring index and in ptsIndices
-            if keycache.has_key( (i-si,j,  k  ) ): neighbors.append( indcache[(i-si,j,  k  )] )
-            if keycache.has_key( (i+si,j,  k  ) ): neighbors.append( indcache[(i+si,j,  k  )] )
-            if keycache.has_key( (i,  j-sj,k  ) ): neighbors.append( indcache[(i,  j-sj,k  )] )
-            if keycache.has_key( (i,  j+sj,k  ) ): neighbors.append( indcache[(i,  j+sj,k  )] )
-            if keycache.has_key( (i,  j,  k-sk) ): neighbors.append( indcache[(i,  j  ,k-sk)] )
-            if keycache.has_key( (i,  j,  k+sk) ): neighbors.append( indcache[(i,  j  ,k+sk)] )
+            if (i-si,j,  k  ) in keycache: neighbors.append( indcache[(i-si,j,  k  )] )
+            if (i+si,j,  k  ) in keycache: neighbors.append( indcache[(i+si,j,  k  )] )
+            if (i,  j-sj,k  ) in keycache: neighbors.append( indcache[(i,  j-sj,k  )] )
+            if (i,  j+sj,k  ) in keycache: neighbors.append( indcache[(i,  j+sj,k  )] )
+            if (i,  j,  k-sk) in keycache: neighbors.append( indcache[(i,  j  ,k-sk)] )
+            if (i,  j,  k+sk) in keycache: neighbors.append( indcache[(i,  j  ,k+sk)] )
 
-            if keycache.has_key( (i-si,j+sj,  k  ) ): neighbors.append( indcache[(i-si,j+sj,  k  )] )
-            if keycache.has_key( (i+si,j+sj,  k  ) ): neighbors.append( indcache[(i+si,j+sj,  k  )] )
-            if keycache.has_key( (i-si,j-sj,  k  ) ): neighbors.append( indcache[(i-si,j-sj,  k  )] )
-            if keycache.has_key( (i+si,j-sj,  k  ) ): neighbors.append( indcache[(i+si,j-sj,  k  )] )
-            if keycache.has_key( (i-si,  j ,k+sk ) ): neighbors.append( indcache[(i-si,  j ,k+sk )] )
-            if keycache.has_key( (i+si,  j ,k+sk ) ): neighbors.append( indcache[(i+si,  j ,k+sk )] )
-            if keycache.has_key( (i-si,  j ,k-sk ) ): neighbors.append( indcache[(i-si,  j ,k-sk )] )
-            if keycache.has_key( (i+si,  j ,k-sk ) ): neighbors.append( indcache[(i+si,  j ,k-sk )] )
-            if keycache.has_key( (i   ,j-sj,k+sk ) ): neighbors.append( indcache[(i   ,j-sj,k+sk )] )
-            if keycache.has_key( (i   ,j+sj,k+sk ) ): neighbors.append( indcache[(i   ,j+sj,k+sk )] )
-            if keycache.has_key( (i   ,j-sj,k-sk ) ): neighbors.append( indcache[(i   ,j-sj,k-sk )] )
-            if keycache.has_key( (i   ,j+sj,k-sk ) ): neighbors.append( indcache[(i   ,j+sj,k-sk )] )
+            if (i-si,j+sj,  k  ) in keycache: neighbors.append( indcache[(i-si,j+sj,  k  )] )
+            if (i+si,j+sj,  k  ) in keycache: neighbors.append( indcache[(i+si,j+sj,  k  )] )
+            if (i-si,j-sj,  k  ) in keycache: neighbors.append( indcache[(i-si,j-sj,  k  )] )
+            if (i+si,j-sj,  k  ) in keycache: neighbors.append( indcache[(i+si,j-sj,  k  )] )
+            if (i-si,  j ,k+sk ) in keycache: neighbors.append( indcache[(i-si,  j ,k+sk )] )
+            if (i+si,  j ,k+sk ) in keycache: neighbors.append( indcache[(i+si,  j ,k+sk )] )
+            if (i-si,  j ,k-sk ) in keycache: neighbors.append( indcache[(i-si,  j ,k-sk )] )
+            if (i+si,  j ,k-sk ) in keycache: neighbors.append( indcache[(i+si,  j ,k-sk )] )
+            if (i   ,j-sj,k+sk ) in keycache: neighbors.append( indcache[(i   ,j-sj,k+sk )] )
+            if (i   ,j+sj,k+sk ) in keycache: neighbors.append( indcache[(i   ,j+sj,k+sk )] )
+            if (i   ,j-sj,k-sk ) in keycache: neighbors.append( indcache[(i   ,j-sj,k-sk )] )
+            if (i   ,j+sj,k-sk ) in keycache: neighbors.append( indcache[(i   ,j+sj,k-sk )] )
 
-            if keycache.has_key( (i+si,j+sj,k+sk ) ): neighbors.append( indcache[(i+si,j+sj,k+sk )] )
-            if keycache.has_key( (i-si,j+sj,k+sk ) ): neighbors.append( indcache[(i-si,j+sj,k+sk )] )
-            if keycache.has_key( (i+si,j-sj,k+sk ) ): neighbors.append( indcache[(i+si,j-sj,k+sk )] )
-            if keycache.has_key( (i+si,j+sj,k-sk ) ): neighbors.append( indcache[(i+si,j+sj,k-sk )] )
-            if keycache.has_key( (i-si,j-sj,k+sk ) ): neighbors.append( indcache[(i-si,j-sj,k+sk )] )
-            if keycache.has_key( (i-si,j+sj,k-sk ) ): neighbors.append( indcache[(i-si,j+sj,k-sk )] )
-            if keycache.has_key( (i+si,j-sj,k-sk ) ): neighbors.append( indcache[(i+si,j-sj,k-sk )] )
-            if keycache.has_key( (i-si,j-sj,k-sk ) ): neighbors.append( indcache[(i-si,j-sj,k-sk )] )
+            if (i+si,j+sj,k+sk ) in keycache: neighbors.append( indcache[(i+si,j+sj,k+sk )] )
+            if (i-si,j+sj,k+sk ) in keycache: neighbors.append( indcache[(i-si,j+sj,k+sk )] )
+            if (i+si,j-sj,k+sk ) in keycache: neighbors.append( indcache[(i+si,j-sj,k+sk )] )
+            if (i+si,j+sj,k-sk ) in keycache: neighbors.append( indcache[(i+si,j+sj,k-sk )] )
+            if (i-si,j-sj,k+sk ) in keycache: neighbors.append( indcache[(i-si,j-sj,k+sk )] )
+            if (i-si,j+sj,k-sk ) in keycache: neighbors.append( indcache[(i-si,j+sj,k-sk )] )
+            if (i+si,j-sj,k-sk ) in keycache: neighbors.append( indcache[(i+si,j-sj,k-sk )] )
+            if (i-si,j-sj,k-sk ) in keycache: neighbors.append( indcache[(i-si,j-sj,k-sk )] )
             
             #neighCO = [x for x in neighbors if not typesCOcache.has_key(x)]
     
             if len(neighbors)>=nneighbor: # if point index (i,j,k) has enough neighbors
             #if len(neighCO)>=nneighbor:
-                neigh = [x for x in neighbors if not incluster.has_key(x)]
+                neigh = [x for x in neighbors if x not in incluster]
                 cluster.extend(neigh)
                 for n in neigh:
                     incluster[n] = True
@@ -206,7 +206,7 @@ class DensityClustering:
                      break
                 cluster = []
                 ci = 0
-                index = indices.values()[0]
+                index = list(indices.values())[0]
                 i,j,k = ptsIndices[index]
                 cluster.append( index )
                 indices.pop(index)
@@ -229,46 +229,46 @@ class DensityClustering:
                 for index in c:
                     i, j, k = ptsIndices[index]
                     for ind in range(1,si):
-                        if keycache.has_key( (i-ind,j,  k  ) ) and indcache[(i-ind, j,  k  )] not in c and indcache[(i-ind, j,  k  )] not in c2: c2.append( indcache[(i-ind, j,  k  )] )
-                        if keycache.has_key( (i+ind,j,  k  ) ) and indcache[(i+ind, j,  k  )] not in c and indcache[(i+ind, j,  k  )] not in c2: c2.append( indcache[(i+ind, j,  k  )] )
+                        if (i-ind,j,  k  ) in keycache and indcache[(i-ind, j,  k  )] not in c and indcache[(i-ind, j,  k  )] not in c2: c2.append( indcache[(i-ind, j,  k  )] )
+                        if (i+ind,j,  k  ) in keycache and indcache[(i+ind, j,  k  )] not in c and indcache[(i+ind, j,  k  )] not in c2: c2.append( indcache[(i+ind, j,  k  )] )
                     for ind in range(1,sj):
-                        if keycache.has_key( (i,  j-ind,k  ) ) and indcache[(i, j-ind,  k  )] not in c and indcache[(i, j-ind,  k  )] not in c2: c2.append( indcache[(i,  j-ind,k  )] )
-                        if keycache.has_key( (i,  j+ind,k  ) ) and indcache[(i, j+ind,  k  )] not in c and indcache[(i, j+ind,  k  )] not in c2: c2.append( indcache[(i,  j+ind,k  )] )
+                        if (i,  j-ind,k  ) in keycache and indcache[(i, j-ind,  k  )] not in c and indcache[(i, j-ind,  k  )] not in c2: c2.append( indcache[(i,  j-ind,k  )] )
+                        if (i,  j+ind,k  ) in keycache and indcache[(i, j+ind,  k  )] not in c and indcache[(i, j+ind,  k  )] not in c2: c2.append( indcache[(i,  j+ind,k  )] )
                     for ind in range(1,sk):
-                        if keycache.has_key( (i,  j,  k-ind) ) and indcache[(i, j,  k-ind  )] not in c and indcache[(i, j,  k-ind  )] not in c2: c2.append( indcache[(i,  j  ,k-ind)] )
-                        if keycache.has_key( (i,  j,  k+ind) ) and indcache[(i, j,  k+ind  )] not in c and indcache[(i, j,  k+ind  )] not in c2: c2.append( indcache[(i,  j  ,k+ind)] )
+                        if (i,  j,  k-ind) in keycache and indcache[(i, j,  k-ind  )] not in c and indcache[(i, j,  k-ind  )] not in c2: c2.append( indcache[(i,  j  ,k-ind)] )
+                        if (i,  j,  k+ind) in keycache and indcache[(i, j,  k+ind  )] not in c and indcache[(i, j,  k+ind  )] not in c2: c2.append( indcache[(i,  j  ,k+ind)] )
                     for indi in range(1,si):
                         for indj in range(1,sj):
-                            if keycache.has_key( (i-indi,j+indj,  k  ) ) and indcache[(i-indi,j+indj,  k  )] not in c and indcache[(i-indi,j+indj,  k  )] not in c2: c2.append( indcache[(i-indi,j+indj,  k  )] )
-                            if keycache.has_key( (i+indi,j+indj,  k  ) ) and indcache[(i+indi,j+indj,  k  )] not in c and indcache[(i+indi,j+indj,  k  )] not in c2: c2.append( indcache[(i+indi,j+indj,  k  )] )
-                            if keycache.has_key( (i-indi,j-indj,  k  ) ) and indcache[(i-indi,j-indj,  k  )] not in c and indcache[(i-indi,j-indj,  k  )] not in c2: c2.append( indcache[(i-indi,j-indj,  k  )] )
-                            if keycache.has_key( (i+indi,j-indj,  k  ) ) and indcache[(i+indi,j-indj,  k  )] not in c and indcache[(i+indi,j-indj,  k  )] not in c2: c2.append( indcache[(i+indi,j-indj,  k  )] )
+                            if (i-indi,j+indj,  k  ) in keycache and indcache[(i-indi,j+indj,  k  )] not in c and indcache[(i-indi,j+indj,  k  )] not in c2: c2.append( indcache[(i-indi,j+indj,  k  )] )
+                            if (i+indi,j+indj,  k  ) in keycache and indcache[(i+indi,j+indj,  k  )] not in c and indcache[(i+indi,j+indj,  k  )] not in c2: c2.append( indcache[(i+indi,j+indj,  k  )] )
+                            if (i-indi,j-indj,  k  ) in keycache and indcache[(i-indi,j-indj,  k  )] not in c and indcache[(i-indi,j-indj,  k  )] not in c2: c2.append( indcache[(i-indi,j-indj,  k  )] )
+                            if (i+indi,j-indj,  k  ) in keycache and indcache[(i+indi,j-indj,  k  )] not in c and indcache[(i+indi,j-indj,  k  )] not in c2: c2.append( indcache[(i+indi,j-indj,  k  )] )
                     for indi in range(1,si):
                         for indk in range(1,sk):
-                            if keycache.has_key( (i-indi,j,  k+indk  ) ) and indcache[(i-indi,j,  k+indk  )] not in c and indcache[(i-indi,j,  k+indk  )] not in c2: c2.append( indcache[(i-indi,j,  k+indk  )] )
-                            if keycache.has_key( (i+indi,j,  k+indk  ) ) and indcache[(i+indi,j,  k+indk  )] not in c and indcache[(i+indi,j,  k+indk  )] not in c2: c2.append( indcache[(i+indi,j,  k+indk  )] )
-                            if keycache.has_key( (i-indi,j,  k-indk  ) ) and indcache[(i-indi,j,  k-indk  )] not in c and indcache[(i-indi,j,  k-indk  )] not in c2: c2.append( indcache[(i-indi,j,  k-indk  )] )
-                            if keycache.has_key( (i+indi,j,  k-indk  ) ) and indcache[(i+indi,j,  k-indk  )] not in c and indcache[(i+indi,j,  k-indk  )] not in c2: c2.append( indcache[(i+indi,j,  k-indk  )] )
+                            if (i-indi,j,  k+indk  ) in keycache and indcache[(i-indi,j,  k+indk  )] not in c and indcache[(i-indi,j,  k+indk  )] not in c2: c2.append( indcache[(i-indi,j,  k+indk  )] )
+                            if (i+indi,j,  k+indk  ) in keycache and indcache[(i+indi,j,  k+indk  )] not in c and indcache[(i+indi,j,  k+indk  )] not in c2: c2.append( indcache[(i+indi,j,  k+indk  )] )
+                            if (i-indi,j,  k-indk  ) in keycache and indcache[(i-indi,j,  k-indk  )] not in c and indcache[(i-indi,j,  k-indk  )] not in c2: c2.append( indcache[(i-indi,j,  k-indk  )] )
+                            if (i+indi,j,  k-indk  ) in keycache and indcache[(i+indi,j,  k-indk  )] not in c and indcache[(i+indi,j,  k-indk  )] not in c2: c2.append( indcache[(i+indi,j,  k-indk  )] )
                     for indj in range(1,sj):
                         for indk in range(1,sk):
-                            if keycache.has_key( (i,j-indj,  k+indk  ) ) and indcache[(i,j-indj,  k+indk  )] not in c and indcache[(i,j-indj,  k+indk  )] not in c2: c2.append( indcache[(i,j-indj,  k+indk  )] )
-                            if keycache.has_key( (i,j+indj,  k+indk  ) ) and indcache[(i,j+indj,  k+indk  )] not in c and indcache[(i,j+indj,  k+indk  )] not in c2: c2.append( indcache[(i,j+indj,  k+indk  )] )
-                            if keycache.has_key( (i,j-indj,  k-indk  ) ) and indcache[(i,j-indj,  k-indk  )] not in c and indcache[(i,j-indj,  k-indk  )] not in c2: c2.append( indcache[(i,j-indj,  k-indk  )] )
-                            if keycache.has_key( (i,j+indj,  k-indk  ) ) and indcache[(i,j+indj,  k-indk  )] not in c and indcache[(i,j+indj,  k-indk  )] not in c2: c2.append( indcache[(i,j+indj,  k-indk  )] )
+                            if (i,j-indj,  k+indk  ) in keycache and indcache[(i,j-indj,  k+indk  )] not in c and indcache[(i,j-indj,  k+indk  )] not in c2: c2.append( indcache[(i,j-indj,  k+indk  )] )
+                            if (i,j+indj,  k+indk  ) in keycache and indcache[(i,j+indj,  k+indk  )] not in c and indcache[(i,j+indj,  k+indk  )] not in c2: c2.append( indcache[(i,j+indj,  k+indk  )] )
+                            if (i,j-indj,  k-indk  ) in keycache and indcache[(i,j-indj,  k-indk  )] not in c and indcache[(i,j-indj,  k-indk  )] not in c2: c2.append( indcache[(i,j-indj,  k-indk  )] )
+                            if (i,j+indj,  k-indk  ) in keycache and indcache[(i,j+indj,  k-indk  )] not in c and indcache[(i,j+indj,  k-indk  )] not in c2: c2.append( indcache[(i,j+indj,  k-indk  )] )
                     
                     for indi in range(1,si):
                         for indj in range(1,sj):
                             for indk in range(1,sk):
-                                if keycache.has_key( (i+indi,j+indj,k+indk ) ) and indcache[(i+indi,j+indj,k+indk )] not in c and indcache[(i+indi,j+indj,k+indk )] not in c2: c2.append( indcache[(i+indi,j+indj,k+indk )] )
-                                if keycache.has_key( (i-indi,j+indj,k+indk ) ) and indcache[(i-indi,j+indj,k+indk )] not in c and indcache[(i-indi,j+indj,k+indk )] not in c2: c2.append( indcache[(i-indi,j+indj,k+indk )] )
-                                if keycache.has_key( (i+indi,j-indj,k+indk ) ) and indcache[(i+indi,j-indj,k+indk )] not in c and indcache[(i+indi,j-indj,k+indk )] not in c2: c2.append( indcache[(i+indi,j-indj,k+indk )] )
-                                if keycache.has_key( (i+indi,j+indj,k-indk ) ) and indcache[(i+indi,j+indj,k-indk )] not in c and indcache[(i+indi,j+indj,k-indk )] not in c2: c2.append( indcache[(i+indi,j+indj,k-indk )] )
-                                if keycache.has_key( (i-indi,j-indj,k+indk ) ) and indcache[(i-indi,j-indj,k+indk )] not in c and indcache[(i-indi,j-indj,k+indk )] not in c2: c2.append( indcache[(i-indi,j-indj,k+indk )] )
-                                if keycache.has_key( (i-indi,j+indj,k-indk ) ) and indcache[(i-indi,j+indj,k-indk )] not in c and indcache[(i-indi,j+indj,k-indk )] not in c2: c2.append( indcache[(i-indi,j+indj,k-indk )] )
-                                if keycache.has_key( (i+indi,j-indj,k-indk ) ) and indcache[(i+indi,j-indj,k-indk )] not in c and indcache[(i+indi,j-indj,k-indk )] not in c2: c2.append( indcache[(i+indi,j-indj,k-indk )] )
-                                if keycache.has_key( (i-indi,j-indj,k-indk ) ) and indcache[(i-indi,j-indj,k-indk )] not in c and indcache[(i-indi,j-indj,k-indk )] not in c2: c2.append( indcache[(i-indi,j-indj,k-indk )] )
+                                if (i+indi,j+indj,k+indk ) in keycache and indcache[(i+indi,j+indj,k+indk )] not in c and indcache[(i+indi,j+indj,k+indk )] not in c2: c2.append( indcache[(i+indi,j+indj,k+indk )] )
+                                if (i-indi,j+indj,k+indk ) in keycache and indcache[(i-indi,j+indj,k+indk )] not in c and indcache[(i-indi,j+indj,k+indk )] not in c2: c2.append( indcache[(i-indi,j+indj,k+indk )] )
+                                if (i+indi,j-indj,k+indk ) in keycache and indcache[(i+indi,j-indj,k+indk )] not in c and indcache[(i+indi,j-indj,k+indk )] not in c2: c2.append( indcache[(i+indi,j-indj,k+indk )] )
+                                if (i+indi,j+indj,k-indk ) in keycache and indcache[(i+indi,j+indj,k-indk )] not in c and indcache[(i+indi,j+indj,k-indk )] not in c2: c2.append( indcache[(i+indi,j+indj,k-indk )] )
+                                if (i-indi,j-indj,k+indk ) in keycache and indcache[(i-indi,j-indj,k+indk )] not in c and indcache[(i-indi,j-indj,k+indk )] not in c2: c2.append( indcache[(i-indi,j-indj,k+indk )] )
+                                if (i-indi,j+indj,k-indk ) in keycache and indcache[(i-indi,j+indj,k-indk )] not in c and indcache[(i-indi,j+indj,k-indk )] not in c2: c2.append( indcache[(i-indi,j+indj,k-indk )] )
+                                if (i+indi,j-indj,k-indk ) in keycache and indcache[(i+indi,j-indj,k-indk )] not in c and indcache[(i+indi,j-indj,k-indk )] not in c2: c2.append( indcache[(i+indi,j-indj,k-indk )] )
+                                if (i-indi,j-indj,k-indk ) in keycache and indcache[(i-indi,j-indj,k-indk )] not in c and indcache[(i-indi,j-indj,k-indk )] not in c2: c2.append( indcache[(i-indi,j-indj,k-indk )] )
                 #c.extend(c2)
-                nc2 = [x for x in c2 if not incluster.has_key(x)]
+                nc2 = [x for x in c2 if x not in incluster]
                 c.extend(nc2)
                 for idx in nc2:
                     incluster[idx] = True

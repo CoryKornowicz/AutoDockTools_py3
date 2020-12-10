@@ -38,9 +38,9 @@ from ADFRcc.adfr import GridMap
 from MolKit2.selection import Selection
 from time import time
 from MolKit2 import Read
-from utils.clusterTPoints import DensityClustering
-from scoreClusters import scoreClusters
-from clusterNode import clusterNode
+from .utils.clusterTPoints import DensityClustering
+from .scoreClusters import scoreClusters
+from .clusterNode import clusterNode
 
 
 class CompositePoints(CalculateAD4Grids):
@@ -108,7 +108,7 @@ class CompositePoints(CalculateAD4Grids):
             ccut = carbon_cutoff - stepC*i
             ocut = oxygen_cutoff - stepO*i
             hcut = hydrogen_cutoff - stepH*i
-            print "Scanning at:",ccut,ocut,hcut            
+            print("Scanning at:",ccut,ocut,hcut)            
             self.getASPoints(carbon_cutoff=ccut, oxygen_cutoff=ocut,hydrogen_cutoff=hcut)
             dcl = DensityClustering([spacing,spacing,spacing], neighborPts=nNeighbor)
             if len(self._indices)>0:
@@ -120,19 +120,19 @@ class CompositePoints(CalculateAD4Grids):
             if len(clusters)>0:
                 clPropsorted = sorted(clProp,key=lambda x:x[5],reverse=True)
             else:
-                print "%d #: %d"%(i, len(clusters))
+                print("%d #: %d"%(i, len(clusters)))
                 continue
-            print 'clust.| Energy| # of |Rad. of | energy |   bns    |score   |'
-            print 'number|       |points|gyration|per vol.|buriedness|v*b^2/rg|'
-            print '------+-------+------+--------+--------+----------+--------|'
+            print('clust.| Energy| # of |Rad. of | energy |   bns    |score   |')
+            print('number|       |points|gyration|per vol.|buriedness|v*b^2/rg|')
+            print('------+-------+------+--------+--------+----------+--------|')
             clN = 1
             clustNum = 1
             for cl, clp in zip(clustersorted, clPropsorted):
                 if clp[1]>3000:
                     scanStopflag=True
-                    print "Flooded with more than 3000 points in one pocket, stop after this scan"
+                    print("Flooded with more than 3000 points in one pocket, stop after this scan")
                 if clp[1]>5000:
-                    print "Flooded with more than 5000 points in one pocket, ignore this scan"
+                    print("Flooded with more than 5000 points in one pocket, ignore this scan")
                     break
                 clusterid += 1
                 #build dictionary of all the coords in the current cluster
@@ -143,15 +143,15 @@ class CompositePoints(CalculateAD4Grids):
                 newTreeNode=clusterNode(id=clusterid,size=clp[1],score=clp[5],rg=clp[3],totalE=clp[0],buriedness=clp[4],gen=i)                          
                 if i==0:                    
                     cluster_dict[str(cl[0][10])]=newTreeNode
-                    print '%5d %8.2f %5d %7.2f %8.2f     %.3f  %8.2f '%(clN,clp[0],clp[1],clp[3],clp[2],clp[4],clp[5])
+                    print('%5d %8.2f %5d %7.2f %8.2f     %.3f  %8.2f '%(clN,clp[0],clp[1],clp[3],clp[2],clp[4],clp[5]))
                     clustNum += 1
                     clN=clN+1
                     clusters_to_keep.append(cl)
                     propclusters_to_keep.append(clp)
                     continue
 
-                for key, value in cluster_dict.iteritems():
-                    if newClustDict.has_key(key):
+                for key, value in cluster_dict.items():
+                    if key in newClustDict:
                         newTreeNode.add_child(value)
                         clusters_to_rm.append(key)
                         registercluster = True
@@ -160,7 +160,7 @@ class CompositePoints(CalculateAD4Grids):
                     del cluster_dict[delkey]
 
                 if registercluster or ccut<-0.299 or len(cluster_dict)<10:
-                    print '%5d %8.2f %5d %7.2f %8.2f     %.3f  %8.2f '%(clN,clp[0],clp[1],clp[3],clp[2],clp[4],clp[5])
+                    print('%5d %8.2f %5d %7.2f %8.2f     %.3f  %8.2f '%(clN,clp[0],clp[1],clp[3],clp[2],clp[4],clp[5]))
                     newTreeNode.id=len(clusters_to_keep)+1
                     clusters_to_keep.append(cl)
                     propclusters_to_keep.append(clp)
@@ -172,7 +172,7 @@ class CompositePoints(CalculateAD4Grids):
                 break
         
         headNode=clusterNode(id=9999,size=999999,score=0)
-        for key, value in cluster_dict.iteritems():
+        for key, value in cluster_dict.items():
             headNode.add_child(value)
         #import pdb; pdb.set_trace()
         #import json
@@ -223,5 +223,5 @@ if __name__=='__main__':
     #                                ('PHE', '80'), ('PHE', '82'), ('GLN', '85'), ('ASP', '86'),
     #                                ('LYS', '89'), ('ASN', '132'), ('LEU', '134'), ('ASP', '145')])
     gc.getTPoints()
-    print len(gc._coords)
+    print(len(gc._coords))
     

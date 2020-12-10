@@ -96,7 +96,7 @@ class featurePts:
                             pCres.append(resname)
         pC = []
         pP = []
-        for k,v in recPdict.iteritems():
+        for k,v in recPdict.items():
             sortrPclusters = sorted(v, key=lambda x:x[1])
             pC.append(sortrPclusters[0][0])
             pP.append(sortrPclusters[0][1])

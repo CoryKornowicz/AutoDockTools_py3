@@ -14,7 +14,7 @@ def spheres2Grid(centers, radii, origin, spacing):
     ox, oy, oz = origin
     spacing1 = 1.0/spacing
     used = {}
-    for n in xrange(len(centers)):
+    for n in range(len(centers)):
         x,y,z = centers[n]
         r = radii[n]
         #r=2
@@ -31,7 +31,7 @@ def spheres2Grid(centers, radii, origin, spacing):
                 for k in range(z0-r0, z0+1+r0):
                     gz = round(oz + k*spacing,3)
                     d2 = (gx-x)*(gx-x) + (gy-y)*(gy-y) + (gz-z)*(gz-z)
-                    if d2<r2 and not used.has_key((i,j,k)):
+                    if d2<r2 and (i,j,k) not in used:
                         used[(i,j,k)] = True
                         gpts.append([i,j,k])
                         pts.append([gx,gy,gz])
@@ -45,7 +45,7 @@ def checkMatch(coords1,coords2):
 
     count=0
     for coord in coords1:
-        if coord_dict.has_key(str(coord)):
+        if str(coord) in coord_dict:
             count=count+1
     return len(coords1),len(coords2),float(count)/(len(coords1)+len(coords2)-count)
 
@@ -72,7 +72,7 @@ if __name__=='__main__':
         pocket = Read(args.pocketFile)
         numpyPocket = False
     else:
-        print 'wrong pocket file format'
+        print('wrong pocket file format')
         exit()
     ligand = Read(args.ligandFile)
     if distanceoption is None:
@@ -102,9 +102,9 @@ if __name__=='__main__':
         coord_dict={}.fromkeys([str(x) for x in origin])
         count=0
         for coord in ppts:
-            if coord_dict.has_key(str(coord)):
+            if str(coord) in coord_dict:
                 count=count+1
-        print len(radiiL),len(ppts),float(count)/(len(ppts)+len(origin)-count)
+        print(len(radiiL),len(ppts),float(count)/(len(ppts)+len(origin)-count))
         #import pdb;pdb.set_trace()
     elif distanceoption == 'pc':
         import pdb;pdb.set_trace()
@@ -123,7 +123,7 @@ if __name__=='__main__':
             distance=math.sqrt(sum( (a - b)**2 for a, b in zip(coord, pocketcenter)))
             if distance<minDist:
                 minDist=distance
-        print minDist
+        print(minDist)
     elif distanceoption == 'tp':
         from prody import calcCenter
         ligandcenter=calcCenter(ligand._ag)
@@ -137,6 +137,6 @@ if __name__=='__main__':
             distance=math.sqrt(sum( (a - b)**2 for a, b in zip(tpts, ligandcenter)))
             if distance<minDist:
                 minDist=distance
-        print minDist
+        print(minDist)
 
 

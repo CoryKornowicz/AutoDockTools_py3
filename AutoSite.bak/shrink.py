@@ -88,7 +88,7 @@ def spheres2Grid(centers, radii, origin, spacing):
     ox, oy, oz = origin
     spacing1 = 1.0/spacing
     used = {}
-    for n in xrange(len(centers)):
+    for n in range(len(centers)):
         x,y,z = centers[n]
         r = radii[n]
         x0 = int((x-ox)*spacing1)
@@ -103,7 +103,7 @@ def spheres2Grid(centers, radii, origin, spacing):
                 for k in range(z0-r0, z0+1+r0):
                     gz = oz + k*spacing
                     d2 = (gx-x)*(gx-x) + (gy-y)*(gy-y) + (gz-z)*(gz-z)
-                    if d2<r2 and not used.has_key((i,j,k)):
+                    if d2<r2 and (i,j,k) not in used:
                         used[(i,j,k)] = True
                         gpts.append((i,j,k))
                         pts.append((gx,gy,gz))

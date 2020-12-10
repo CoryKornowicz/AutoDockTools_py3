@@ -74,7 +74,7 @@ def scoreClusters(rec, dcl, gc, inflate=False, pepScore=False):
             dmetric = Buriedness(clc, cla, coords.tolist(), radii,origin=[ox,oy,oz] )
             if inflate==True:
                 fburied,inflateIndices = dmetric.inflatePocketandBuriedness(origin=[ox,oy,oz],spacing=1.0) 
-                for ind,coord in inflateIndices.iteritems():
+                for ind,coord in inflateIndices.items():
                     #import pdb;pdb.set_trace()
                     if ind[0]>=odata.shape[0] or ind[1]>=odata.shape[1] or ind[2]>=odata.shape[2]:
                         continue

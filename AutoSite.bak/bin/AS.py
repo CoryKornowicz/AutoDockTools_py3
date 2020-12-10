@@ -117,7 +117,7 @@ else:
         os.mkdir(name)
         outdir = name
     except OSError:
-        raise RuntimeError, "ERROR unable to create folder %s, please use -o option to specify unused folder name for results"%name
+        raise RuntimeError("ERROR unable to create folder %s, please use -o option to specify unused folder name for results"%name)
     
 folder = outdir
 
@@ -128,7 +128,7 @@ def myprint(str):
 try:
     summaryFP = open(outdir+'_AutoSiteSummary.log', 'w')
 except OSError:
-    print("ERROR: output file %s already exists, please remove or use the -o command line to provide unused output name"%(outdir+'_AutoSiteSummary.log'))
+    print(("ERROR: output file %s already exists, please remove or use the -o command line to provide unused output name"%(outdir+'_AutoSiteSummary.log')))
     sys.exit(1)
 
 if args.steps is None:
@@ -258,14 +258,14 @@ from AutoSite.utils.clusterTPoints import DensityClustering
 
 if args.steps is not None:
     steps=int(args.steps)
-    print("Cutoffs scan starting from"), cmin,omin,hmin, " to ", cmin/2,omin/2,hmin/2
+    print(("Cutoffs scan starting from"), cmin,omin,hmin, " to ", cmin/2,omin/2,hmin/2)
     
     tt0=time()
     from AutoSite.compositePoints import CompositePoints
     dcl, headNode = gc.bestCutoffClustering(receptor,spacing=spacing,carbon_cutoff=cmin,oxygen_cutoff=omin,hydrogen_cutoff=hmin,nbSteps=steps)
-    print("cutoff scan time:%8.2f seconds"%(time()-tt0))
+    print(("cutoff scan time:%8.2f seconds"%(time()-tt0)))
 else:
-    print("No cutoff scan and use cutoffs", cmin, omin, hmin)
+    print(("No cutoff scan and use cutoffs", cmin, omin, hmin))
     gc.getASPoints(carbon_cutoff=cmin, oxygen_cutoff=omin, hydrogen_cutoff=hmin)
     myprint('clustering high affinity points ... ')
     dcl = DensityClustering([spacing,spacing,spacing],neighborPts=nn)
@@ -361,7 +361,7 @@ for cl, clp in zip(clustersorted, clPropsorted):
 
         #flexResStr = ''
         flexibleResidues = []
-        for k,v in fresdict.iteritems():
+        for k,v in fresdict.items():
             #resstr =  "".join(str(x)+',' for x in v)
             #flexResStr = flexResStr+k+':'+resstr+';'
             reslst = []

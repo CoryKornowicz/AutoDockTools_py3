@@ -83,7 +83,7 @@ class Buriedness:
         ox, oy, oz = origin
         spacing1 = 1.0/spacing
         used = {}
-        for n in xrange(len(centers)):
+        for n in range(len(centers)):
             x,y,z = centers[n]
             r = radii[n]
             x0 = int((x-ox)*spacing1)
@@ -98,7 +98,7 @@ class Buriedness:
                     for k in range(z0-r0, z0+1+r0):
                         gz = oz + k*spacing
                         d2 = (gx-x)*(gx-x) + (gy-y)*(gy-y) + (gz-z)*(gz-z)
-                        if d2<r2 and not used.has_key((i,j,k)):
+                        if d2<r2 and (i,j,k) not in used:
                             used[(i,j,k)] = True
                             gpts.append((i,j,k))
                             pts.append((gx,gy,gz))
@@ -145,7 +145,7 @@ class Buriedness:
             shellDict[ind] = coords 
 
         for inds in set1Ind:
-            if shellDict.has_key(inds):
+            if inds in shellDict:
                 del shellDict[inds]
 
         # remember the number of point in the shell
@@ -155,14 +155,14 @@ class Buriedness:
         #import pdb;pdb.set_trace()
         set2Ind, set2Coords = self.spheres2Grid(centersR, numpy.array(radiiR)+1, mini, spacing)
         for inds in set2Ind:
-            if shellDict.has_key(inds):
+            if inds in shellDict:
                 del shellDict[inds]
         
         #numpy.save('buriedNum/shellKept%d.xyzr'%num, shellDict.values())
         #numpy.save('buriedNum/shellRemoved%d.xyzr'%num, removedCoords)
 
         #Recalculate for inflated pocket
-        for ind,coord in shellDict.iteritems():
+        for ind,coord in shellDict.items():
             centersL = numpy.vstack((centersL, coord))
         radiiL = [spacing+0.1] * len(centersL)
         # get (i,j,k) for enlarged first set of sphere
@@ -175,7 +175,7 @@ class Buriedness:
             shellNewDict[ind] = coords 
 
         for inds in set1Ind:
-            if shellNewDict.has_key(inds):
+            if inds in shellNewDict:
                 del shellNewDict[inds]
 
         # remember the number of point in the shell
@@ -185,7 +185,7 @@ class Buriedness:
         # we increase the raddi by 1.0 to get of points in the layer between close spheres
         #import pdb;pdb.set_trace()
         for inds in set2Ind:
-            if shellNewDict.has_key(inds):
+            if inds in shellNewDict:
                 del shellNewDict[inds]
 
 
@@ -231,7 +231,7 @@ class Buriedness:
             shellDict[ind] = coords 
 
         for inds in set1Ind:
-            if shellDict.has_key(inds):
+            if inds in shellDict:
                 del shellDict[inds]
 
         # remember the number of point in the shell
@@ -243,7 +243,7 @@ class Buriedness:
         set2Ind, set2Coords = self.spheres2Grid(centersR, numpy.array(radiiR)+1, mini-2*padding, spacing)
         removedCoords = []
         for inds in set2Ind:
-            if shellDict.has_key(inds):
+            if inds in shellDict:
                 removedCoords.append(shellDict[inds])
                 del shellDict[inds]
         #numpy.save('buriedNum/shellKept%d.xyzr'%num, shellDict.values())
