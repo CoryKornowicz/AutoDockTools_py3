@@ -37,7 +37,9 @@ import AutoSite
 from time import time
 
 from MolKit2 import Read
+# TODO -- Replace with PyAutoDock AutoGrid Framework
 from ADFRcc.adfr import GridMap
+
 parser = argparse.ArgumentParser(description='AutoSite', usage="usage: %(prog)s --receptor or --maps [options] filename",
                       version="%prog 0.1")
 parser.add_argument("-r", "--receptor",
