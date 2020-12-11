@@ -32,13 +32,13 @@
 # $Id: AS.py,v 1.11 2017/06/09 23:03:28 zhangyq Exp $
 #
 
-import argparse, numpy, os, sys, platform, datetime
-import AutoSite
+import argparse, numpy, os, platform, datetime, sys
+import AutoSite 
 from time import time
 
 from MolKit2 import Read
 # TODO -- Replace with PyAutoDock AutoGrid Framework
-from ADFRcc.adfr import GridMap
+from PyAutoDock import AutoGrid
 
 parser = argparse.ArgumentParser(description='AutoSite', usage="usage: %(prog)s --receptor or --maps [options] filename",
                       version="%prog 0.1")

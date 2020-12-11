@@ -98,10 +98,10 @@ def residueToken(token):
         else: # keep the range of residues numbers
             resnums.append(token)
 
-    elif token in AAnames: # AA name such as ALA
+    elif AAnames.has_key(token): # AA name such as ALA
         resnames.append(token)
 
-    elif token in residueSelKw: # key words such as backbone
+    elif residueSelKw.has_key(token): # key words such as backbone
         kw.append(token)
 
     elif token[0]=='#': # 1-based index
@@ -222,7 +222,7 @@ def atomToken(token):
         else: # keep the range of atom indices
             inds.append(token)
 
-    elif token in atomSelKw: # key words such as backbone
+    elif atomSelKw.has_key(token): # key words such as backbone
         kws.append(token)
 
     elif token[0]=='#': # 1-based index
@@ -302,7 +302,7 @@ class AssignSecondaryStructureWtihPross:
     def __init__(self, default='fgmeso'):
         """ # Setup Fine Grain Mesostate Bins (ala Pat Fleming)"""
         """ see PROSS.py """
-        from .PROSS import MSDEFS
+        from PROSS import MSDEFS
         self.mode=default
         self.MSDEFS=MSDEFS[default]
 
@@ -358,14 +358,14 @@ class AssignSecondaryStructureWtihPross:
 
         is_PII = PII.has_key
 
-        for i in range(nres-1):
+        for i in xrange(nres-1):
             code = codes[i]
             if is_PII(code):
                 sst[i] = 'P'
 
         is_turn = TURNS.has_key
 
-        for i in range(nres-1):
+        for i in xrange(nres-1):
             code = codes[i] + codes[i+1]
             if is_turn(code):		
                 sst[i] = sst[i+1] = 'T'
@@ -439,7 +439,7 @@ class AssignSecondaryStructureWtihPross:
 
         try:
                 while 1:
-                        mat = next(it)
+                        mat = it.next()
                         matches.append((mat.start()/CODE_LENGTH, mat.end()/CODE_LENGTH))
         except StopIteration:
                 pass
@@ -486,11 +486,11 @@ class Molecule(TreeObject):
        selection string
     """
     vdw_rad = numpy.zeros( 110, 'f' )
-    for k,v in list(babel_elements.items()):
+    for k,v in babel_elements.items():
         vdw_rad[v['num']] = v['vdw_rad']
         
     bo_rad = numpy.zeros( 110, 'f' )
-    for k,v in list(babel_elements.items()):
+    for k,v in babel_elements.items():
         bo_rad[v['num']] = v['bond_ord_rad']
 
     ## def __del__(self):
@@ -688,7 +688,7 @@ class Molecule(TreeObject):
 
     def addAGBondData(self, name, value, defaultValue):
         ## add a data field to ag._data with default value
-        if name in self._ag._bondData:
+        if self._ag._bondData.has_key(name):
             raise ValueError("Molecule.addAGBondData: there already is a field called %s in the AtomGroup._bondData of molecule %s"%(name, self.name))
         self._ag._bondData[name] = value
         #self._ag._customFieldsDefaultValues['bonds'][name] = defaultValue
@@ -849,7 +849,7 @@ indices are 1-based
                     return Selection(self._ag, sel._indices, selstr,
                                      self._ag.getACSIndex())
         except SelectionError:
-            print("Prody Selection Error:", sys.exc_info()[1])
+            print "Prody Selection Error:", sys.exc_info()[1]
 
     def emptySelection(self):
         return Selection(self._ag, [], '', None)
@@ -1177,7 +1177,7 @@ After running this command, atoms will have:
                 n1 = 1./sqrt((sx1*sx1 + sy1*sy1 + sz1*sz1))
                 # normalize v1 v2
                 sx1, sy1, sz1 = sx1*n1, sy1*n1, sz1*n1
-                if _atomIndices[i] in aromaticArcs:
+                if aromaticArcs.has_key(_atomIndices[i]):
                     aromaticArcs[_atomIndices[i]].append(
                         (self._aromaticAtomsCounter, _center, _normal, (sx1, sy1, sz1), angle, radius) )
                 else:
@@ -1316,7 +1316,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
             if len(angleDef):
                 try:
                     atoms = resAtoms.select('name '+' '.join(angleDef))
-                except KeyError as e:
+                except KeyError, e:
                     if 'ND1' in angleDef:
                         angleDef1 =  angleDef[:3]+['ND2']
                         atoms = resAtoms.select('name '+' '.join(angleDef1))
@@ -1394,7 +1394,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
     
     def addAtoms(self, sele):
         ## NOT USED ANYMORE
-        raise RuntimeError("Molecule.AddAtoms is deprecated, use _ag.extend(sele) instead")
+        raise RuntimeError, "Molecule.AddAtoms is deprecated, use _ag.extend(sele) instead"
         ## extend self._ag with atoms from sele
         ## if sele has some data or flags fields missing they are
         ## initialized with self._ag._customFieldsDefaultValues if found
@@ -1442,7 +1442,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
                 a1[tokeep] = indices[tokeep]
                 mapping = numpy.ones(size,'i')*-1
                 maxi = 0
-                for i in range(len(a1)):
+                for i in xrange(len(a1)):
                     if a1[i]!=-1:
                         mapping[i] = maxi
                         maxi += 1
@@ -1451,7 +1451,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
                 bo = selag._bondOrder
                 if bo is not None:
                     newBo = bo.copy()
-                    for bn in range(len(bonds2)):
+                    for bn in xrange(len(bonds2)):
                         i,j = bonds[bn]
                         ni,nj = newBonds[bn]
                         newBo['%d %d'%(ni,nj)] = bo['%d %d'%(i,j)]
@@ -1481,7 +1481,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
                 # name is missing in atoms
                 defaultValue = ag._customFieldsDefaultValues['data'].get(name, None)
                 if defaultValue is None:
-                    raise RuntimeError("No default value for field %s"%name)
+                    raise RuntimeError, "No default value for field %s"%name
                 data2 = numpy.array( [defaultValue]*len(selag), data1.dtype)
 
             if name=='serials': # serials have to be unique
@@ -1502,14 +1502,14 @@ if united is true large atomic radii are used for atoms which have no hydrogens
                 # name is missing in atoms
                 defaultValue = ag._customFieldsDefaultValues['flags'].get(name, None)
                 if defaultValue is None:
-                    raise RuntimeError("No default value for field %s"%name)
+                    raise RuntimeError, "No default value for field %s"%name
                 data2 = numpy.array( [defaultValue]*len(selag), data1.dtype)
             nag._setFlags(name, numpy.concatenate( (data1, data2) ))
                 
         ##
         ## bondData 
         ##
-        for name in list(ag._bondData.keys()):
+        for name in ag._bondData.keys():
             if name in SKIP:
                 continue
             data1 = ag._bondData.get(name)
@@ -1518,7 +1518,7 @@ if united is true large atomic radii are used for atoms which have no hydrogens
                 # name is missing in atoms
                 defaultValue = ag._customFieldsDefaultValues['bonds'].get(name, None)
                 if defaultValue is None:
-                    raise RuntimeError("No default value for field %s"%name)
+                    raise RuntimeError, "No default value for field %s"%name
                 data2 = numpy.array( [defaultValue]*len(selag), data1.dtype)
 
             nag._bondData[name] = numpy.concatenate((data1, data2))
@@ -1554,11 +1554,11 @@ if united is true large atomic radii are used for atoms which have no hydrogens
             self.pdbHeader = prody.parsePDB(self.filename, model=0, header=True)
 
         if which is 'all':
-            bioMolNames = list(self.pdbHeader['biomoltrans'].keys())
+            bioMolNames = self.pdbHeader['biomoltrans'].keys()
         else:
-            assert str(which) in list(self.pdbHeader['biomoltrans'].keys()), \
+            assert str(which) in self.pdbHeader['biomoltrans'].keys(), \
                    "Biomolecule %s not recognized expected one of %s"%(
-                str(which), list(self.pdbHeader['biomoltrans'].keys()))
+                str(which), self.pdbHeader['biomoltrans'].keys())
             bioMolNames = [str(which)]
 
         bioMols = []
@@ -1808,7 +1808,7 @@ class MultiMolecule(Molecule):
             modeTimeFromCache = float(f.readline())
             if abs(os.path.getmtime(self.filename)-modeTimeFromCache)>0.01:
                 #print 'modeTimeFromCache', modeTimeFromCache, os.path.getmtime(self.filename), modeTimeFromCache-os.path.getmtime(self.filename)
-                print('WARNING: cache file %s found but modification time does not match. Re-indexing'%self.filename)
+                print 'WARNING: cache file %s found but modification time does not match. Re-indexing'%self.filename
                 buildIndex = True
             else:
                 self.index = [int(x) for x in f.readline().split()]
@@ -1844,14 +1844,14 @@ class MultiMolecule(Molecule):
             else:
                 return
             self._hasIndex = True
-            print('MSG: time to index', time()-t0)
+            print 'MSG: time to index', time()-t0
 
             # save index in file cache
             try:
                 f = open(indexFilename, 'w')
-                print('MSG: writing index file:', indexFilename, os.path.getmtime(self.filename))
+                print 'MSG: writing index file:', indexFilename, os.path.getmtime(self.filename)
             except IOError:
-                print('WARNING: Failed to save index cache %', indexFilename)
+                print 'WARNING: Failed to save index cache %', indexFilename
                 return # failed to write cache
             modTime = os.path.getmtime(self.filename)
             f.write('%f\n'%modTime) # write the file last modification time for sanity check
@@ -1897,7 +1897,7 @@ class MoleculeSet(list):
                     if mol.name==token:
                         molDict[mol] = 1
                         break
-        return MoleculeSet('selection', list(molDict.keys()))
+        return MoleculeSet('selection', molDict.keys())
 
     def selectMolKit(self, selstr=''):
         """select molecular fragments. Returns a SelectionSet
@@ -1972,7 +1972,7 @@ class Chain(TreeObject):
         self.alias = ''
         if isinstance(pchain, SelectionSet):
             self.selSet = pchain
-            self._atomSubset = next(pchain[0].getHierView().iterChains())
+            self._atomSubset = pchain[0].getHierView().iterChains().next()
         elif isinstance(pchain, ProDyChain):
             self._atomSubset = pchain
             self.selSet = SelectionSet( [self.select()] )
@@ -2029,7 +2029,7 @@ class Residue(TreeObject):
         self.alias = ''
         if isinstance(presidue, SelectionSet):
             self.selSet = presidue
-            self._atomSubset = next(presidue[0].getHierView().iterResidues())
+            self._atomSubset = presidue[0].getHierView().iterResidues().next()
         elif isinstance(presidue, ProDyResidue):
             self._atomSubset = presidue
             self.selSet = SelectionSet( [self.select()] )

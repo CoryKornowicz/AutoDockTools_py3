@@ -70,7 +70,7 @@ angleList: list of Chi angles from rotamer library
         self.atoms = atoms
         self.originalAngles = []
 
-        self.atomOrder = list(range(len(atoms)))
+        self.atomOrder = range(len(atoms))
         self.alignBBmatrix = numpy.identity(4)
         
         # compute Chi angles in incomming residue
@@ -208,7 +208,7 @@ returns coordinates of side chain atoms for the specified CHI angles
                 #if abs(sa1-sa2) > 1.0:
                 #print 'WANTED', angle, 'GOTTEN', t
                 if abs(angle-t) > 1.0 and abs(angle-(360.0-t)) > 1.0:
-                    print('WANTED', angle, 'GOTTEN', t, 'DIFF', abs(angle-t))
+                    print 'WANTED', angle, 'GOTTEN', t, 'DIFF', abs(angle-t)
                     raise RuntimeError
                     import pdb
                     pdb.set_trace()
@@ -355,11 +355,11 @@ class CanonicalAARotamers:
         atomNames = {}.fromkeys(atoms.getNames())
         missing = []
         for key in rotAtomNames:
-            if key not in atomNames:
+            if not atomNames.has_key(key):
                 missing.append(key)
             else:
                 del atomNames[key]
-        return missing, list(atomNames.keys())
+        return missing, atomNames.keys()
 
     def __call__(self, residueName):
         residueName = residueName.upper()
@@ -566,10 +566,10 @@ if __name__=='__main__':
                     rotlib.getAngles('TYR'))
     colliderAtoms = prot.select('not (chid A and resnum 29)')
     best, scores, fav, clash = rot.scoreRotamers(colliderAtoms)
-    print('best:', best)
-    print('scores:', scores)
-    print('favorables:',fav)
-    print('clashes:', clash)
+    print 'best:', best
+    print 'scores:', scores
+    print 'favorables:',fav
+    print 'clashes:', clash
     #import pdb; pdb.set_trace()
     #
     canRot = CanonicalAARotamers()
@@ -578,7 +578,7 @@ if __name__=='__main__':
     missing, extra = canRot.findMissingAndExtraAtoms(res)
     missing1, extra1 = canRot.findMissingAndExtraAtoms(
         res.select('bb or name CB'))
-    print('MISSING', missing1)
+    print 'MISSING', missing1
 
     mutator = AARotamerMutator()
     #mutator.mutate(prot, 'A', 29, 'ARG')

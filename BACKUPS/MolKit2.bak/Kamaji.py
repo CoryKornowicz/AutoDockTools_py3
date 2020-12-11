@@ -405,13 +405,13 @@ class Kamaji:
                 continue
             chains = {}
             remove = []
-            for resId, info in list(self.structureTypes[kw].items()):
+            for resId, info in self.structureTypes[kw].items():
                 rchain = info['chain']
                 reslist = chains.setdefault(rchain, [])
                 reslist.append(resId)
 
             count = 0
-            for c,reslist in list(chains.items()):
+            for c,reslist in chains.items():
                 if len(reslist) <= self._default_minrescount:
                     ligands = self.structureTypes.setdefault('ligand', {})
                     shortList = ligands.setdefault(tag, {})
@@ -425,7 +425,7 @@ class Kamaji:
     def getShortChainProperty(self, shortChain):
         """ short chain properties (peptides/nucleic) properties """
         indices = []
-        for resId, data in list(shortChain.items()):
+        for resId, data in shortChain.items():
             indices.append((resId, data['num']))
         sorted(indices, key=itemgetter(1))
         seq = "-".join( [str(x[1]) for x in indices] )
@@ -435,9 +435,9 @@ class Kamaji:
 
     def filterLigands(self):
         """ scan for potential ligands and known classes"""
-        if not 'unknown' in list(self.structureTypes.keys()):
+        if not 'unknown' in self.structureTypes.keys():
             return
-        for resId in list(self.structureTypes['unknown'].keys()):
+        for resId in self.structureTypes['unknown'].keys():
             lipid = self._isLipid(resId)
             if lipid:
                 ligand = self.structureTypes.setdefault('ligand', {})
@@ -462,8 +462,8 @@ class Kamaji:
             return
         # DEBUG:
         if False:
-            for kind, data in list(self.structureTypes['ligand'].items()):
-                for k in list(data.keys()):
+            for kind, data in self.structureTypes['ligand'].items():
+                for k in data.keys():
                     #res = self.mol.GetResidue(k)
                     #mol = self.residueToMol(res)
                     rObj = self.mol.GetResidue(k)
@@ -472,7 +472,7 @@ class Kamaji:
                     for a in ob.OBResidueAtomIter(rObj):
                         bc =  len([x for x in ob.OBAtomBondIter(a) ])
                         btotal += bc
-                    print("RESIDUE TOTAL BONDS",k, btotal)
+                    print "RESIDUE TOTAL BONDS",k, btotal
 
 
     def ligandProperties(self, resId):
@@ -549,7 +549,7 @@ class Kamaji:
         self.filterLigands()
 
         # clean classes that have been emptied..
-        for k,i in list(self.structureTypes.items()):
+        for k,i in self.structureTypes.items():
             if len(i) == 0:
                 del self.structureTypes[k]
 
@@ -559,7 +559,7 @@ class Kamaji:
         """
         if not 'unknown' in self.structureTypes:
             return
-        for resIdx in list(self.structureTypes['unknown'].keys()):
+        for resIdx in self.structureTypes['unknown'].keys():
             if self._isWater(resIdx):
                 water = self.structureTypes.setdefault('water', {} )
                 water[resIdx] = self.structureTypes['unknown'].pop(resIdx)
@@ -588,13 +588,13 @@ class Kamaji:
                 metal
         """
         # XXX "[ this function will be updated with statistics on teh PDB distro ]"
-        if not 'unknown' in list(self.structureTypes.keys()):
+        if not 'unknown' in self.structureTypes.keys():
             return
         salt = {}
         metal = {}
         catalytic = {}
         unknown = {}
-        for resIdx in list(self.structureTypes['unknown'].keys()):
+        for resIdx in self.structureTypes['unknown'].keys():
             res = self.mol.GetResidue(resIdx)
             atoms = [ x for x in ob.OBResidueAtomIter(res) ]
             if len(atoms) == 1:
@@ -629,7 +629,7 @@ class Kamaji:
         if not 'modRes' in self.pdbInfo:
             return
         info = self.pdbInfo['modRes']
-        if chain in list(info.keys()):
+        if chain in info.keys():
             for modres in info[chain]:
                 if not ( modres['resName'] == name ):
                     continue
@@ -655,13 +655,13 @@ class Kamaji:
         # cache all target atom indices
         target = []
         for kw in ['protein', 'nucleic']:
-            if kw in list(self.structureTypes.keys()):
+            if kw in self.structureTypes.keys():
                 target += self.structureTypes[kw]
         targetIdx = set( self._getAtomIdx(target) )
         glyco = []
         glyco_common = {}
         # check if residues are attached to the target
-        for resId in list(self.structureTypes['unknown'].keys()):
+        for resId in self.structureTypes['unknown'].keys():
             resAtomIdx = set( self._getAtomsBoundToRes(resId))
             common = targetIdx & resAtomIdx
             if len(common):
@@ -726,9 +726,9 @@ class Kamaji:
         if not 'unknown' in self.structureTypes:
             return
         clusters = {}
-        for r1 in list(self.structureTypes['unknown'].keys()):
+        for r1 in self.structureTypes['unknown'].keys():
             clusters[r1] = []
-            for r2 in list(self.structureTypes['unknown'].keys()):
+            for r2 in self.structureTypes['unknown'].keys():
                 if r1 == r2: continue
                 if self._areResConnected(r1, r2):
                     clusters[r1].append(r2)
@@ -801,7 +801,7 @@ class Kamaji:
         patterns = self._guessingGroups['lipids']
 
         for pair in patterns:
-            name, p = list(pair.items())[0]
+            name, p = pair.items()[0]
             result = self._SmartsMatcher(res, p)
             if result:
                 return name
@@ -832,13 +832,13 @@ class Kamaji:
             return
         cutoffFP = 0.8
         cutoffMWratio = 0.5
-        for resId, info in list(self.structureTypes['unknown'].items()):
+        for resId, info in self.structureTypes['unknown'].items():
             res = self.mol.GetResidue(resId)
             resObj = self.residueToMol(res)
             fp, mw, smi = self.getResidueFP(resId)
             best = -1
             bestName = None
-            for additiveId, data in list(self._knownXrayAdditives.items()):
+            for additiveId, data in self._knownXrayAdditives.items():
                 name = data['commonName']
                 smi = data['smi']
                 score, tanimoto = self.getSampleScore(smi, mw, fp)
@@ -927,7 +927,7 @@ class Kamaji:
     def blendmol(self, mol):
         """ """
         mol.write('pdb', filename='x.pdb', overwrite=True)
-        mol = next(pybel.readfile('pdb', 'x.pdb'))
+        mol = pybel.readfile('pdb', 'x.pdb').next()
         mol.OBMol.ConnectTheDots()
         return mol
 
@@ -978,7 +978,7 @@ class Kamaji:
         """ filter and identifies known co-factors """
         if not 'unknown' in self.structureTypes:
             return
-        for resId, info in list(self.structureTypes['unknown'].items()):
+        for resId, info in self.structureTypes['unknown'].items():
             found = self._isCofactor(info['name'])
             if not found == None:
                 cofactor = self.structureTypes.setdefault('cofactor', {})
@@ -1179,7 +1179,7 @@ class MultiStatePDB:
     def parsePdbInfo(self):
         """ parse all remarks in the PDB"""
         self.pdbInfo = {}
-        for kw, v in list(self.remarkToType.items()):
+        for kw, v in self.remarkToType.items():
             self.pdbInfo[v] = []
         for l in self.getHeader():
             value = None
@@ -1189,7 +1189,7 @@ class MultiStatePDB:
             value = None
             if l[0:6] == 'REMARK':
                 value = l[0:10]
-                if not value in list(self.remarkToType.keys()): 
+                if not value in self.remarkToType.keys(): 
                     value = None
                     continue
             elif l[0:6] == 'HET   ':
@@ -1204,7 +1204,7 @@ class MultiStatePDB:
                 kw = self.remarkToType[value]
                 buff = self.pdbInfo[kw].append(l)
         
-        for kw, data in list(self.pdbInfo.items()):   
+        for kw, data in self.pdbInfo.items():   
             self.pdbInfo[kw] = self.typeToFunc[kw](data)
 
     def _parseMissingResidues(self, data):
@@ -1217,7 +1217,7 @@ class MultiStatePDB:
             if inside:
                 raw = l.split(kw, 1)[1]
                 res, chain, seqId = raw.split() # this must be always len() == 3?!?
-                if not chain in list(new.keys()):
+                if not chain in new.keys():
                     new[chain] = []
                 new[chain].append( (res, seqId) )
             if pattern in l:
@@ -1240,7 +1240,7 @@ class MultiStatePDB:
         for l in data:
             raw.append( l.split(kw, 1)[1].strip() )
         rawString = " | ".join(raw)
-        for k,v in list(known_methods.items()):
+        for k,v in known_methods.items():
             if k in rawString.lower():
                 method = v
                 break
@@ -1354,7 +1354,7 @@ class MultiStatePDB:
             iCode = l[17]
             numHetAtoms = l[20:25].strip()
             text = l[30:70].strip()
-            if not chainID in list(new.keys()):
+            if not chainID in new.keys():
                 new[chainID] = []
             new[chainID].append( (hetID,seqNum) )
         return new
@@ -1481,7 +1481,7 @@ class MultiStatePDB:
         # XXX
         kw = self.coordKw # ('ATOM   ', 'HETATM ')
         i,j = self._kwslicing
-        for mIdx, model in list(self.modelSet.items()):
+        for mIdx, model in self.modelSet.items():
             self.currentModel = mIdx
             self.altResidues[mIdx] = {}
             structure = {}
@@ -1499,11 +1499,11 @@ class MultiStatePDB:
         
         # DEBUG
         if 0:
-            for ch, re in list(self.modelSet[mIdx].items()):
-                print("CH[%s]" % ch)
-                for nu, inf in list(re.items()):
-                    for k,v in list(inf.items()):
-                        print("\t", k, v)
+            for ch, re in self.modelSet[mIdx].items():
+                print "CH[%s]" % ch
+                for nu, inf in re.items():
+                    for k,v in inf.items():
+                        print "\t", k, v
                 
 
 #x ADD CHECK FOR COVALENT LIGANDS!
@@ -1540,8 +1540,8 @@ class MultiStatePDB:
 
     def cleanStructure(self, structure):
         """process each residue for alt states"""
-        for chain, residue in list(structure.items()):
-            for res, atoms  in list(residue.items()):
+        for chain, residue in structure.items():
+            for res, atoms  in residue.items():
                 newResAtoms = self.compactAtoms(atoms)
                 structure[chain][res] = newResAtoms
         return structure
@@ -1586,7 +1586,7 @@ class MultiStatePDB:
         """
         out = []
         currModel = self.modelSet[self.currentModel]
-        for modelChain, residues in list(currModel.items()):
+        for modelChain, residues in currModel.items():
             if chains and not modelChain in chains:
                 continue
             for resNum in sorted(residues.keys()):
@@ -1598,7 +1598,7 @@ class MultiStatePDB:
     def sortedResidues(self, residues):
         """ return a tuple with """
         out = []
-        keys = list(residues.keys())
+        keys = residues.keys()
         nameNum = [ (x[0:3], int(x[3:])) for x in keys ]
         nameNum.sort(key=itemgetter(1))
         for name, num in nameNum:
@@ -1809,7 +1809,7 @@ class KamajiInterface:
             branch.fragType = o
             branch.fragTypeCount = 1
             root.fragTypeCount += 1
-            for i,d in list(kst[o].items()):
+            for i,d in kst[o].items():
                 if o == 'additives':
                     name = d['commonName']
                 else:
@@ -1862,11 +1862,11 @@ class KamajiInterface:
             glycoNode = n.add('Glycosylation (%d)' % len(groups))
             glycoNode.fragType = 'glyco'
             glycoNode.fragTypeCount = 1
-            for g, data in list(groups.items()):
+            for g, data in groups.items():
                 resList = data['residues']
                 currNode = glycoNode.add('Site %d->%s' % (g+1, data['attachedTo'] ))
                 glycoResidues.append( data['attachedTo'])
-                currNode.selection = [ int(x['num']) for x in list(resList.values()) ]
+                currNode.selection = [ int(x['num']) for x in resList.values() ]
                 currNode.info = self.getGlycosilationInfo(data) # glycosylation info goes here
                 currNode.fragType = 'glyco'
                 currNode.fragTypeCount = 1
@@ -1879,7 +1879,7 @@ class KamajiInterface:
             modNode = n.add('Covalent/modifiers')
             modNode.fragType = 'covalent'
             modNode.fragTypeCount = 1
-            for mId, data in list(modData.items()):
+            for mId, data in modData.items():
                 name = "%s->%s" % (data['name'],data['attachedTo'])
                 currNode = modNode.add(name)
                 currNode.selection = [ data['num'] ]
@@ -1937,7 +1937,7 @@ class KamajiInterface:
             cofactorData = kst['cofactor']
             cofactorNode.fragType = 'cofactor'
             cofactorNode.fragTypeCount = 1
-            for cId, data in list(cofactorData.items()):
+            for cId, data in cofactorData.items():
                 currNode = cofactorNode.add(data['name'])
                 currNode.selection = [ data['num'] ]
                 cofactorNames.append( '%s%s' % (data['name'], data['num']) )
@@ -1957,7 +1957,7 @@ class KamajiInterface:
             tree.fragTypeCount += 1
             waterNode.fragType = 'water'
             waterNode.fragTypeCount = 1
-            for cId, data in list(waterData.items()):
+            for cId, data in waterData.items():
                 currNode = waterNode.add( '%s-%s' % (data['name'], data['num']))
                 currNode.selection = [ data['num'] ]
                 currNode.info = {} # water info goes here
@@ -1984,10 +1984,10 @@ class KamajiInterface:
         stdNode = root.add(title)
         stdNode.selection = self.getResNum(v)
         stdNode.info = self.getBioPolymerInfo(v)
-        stdNode.name = (stdNode.name % len(list(v.keys())))
+        stdNode.name = (stdNode.name % len(v.keys()))
         stdNode.fragType = root.fragType = fragType
         stdNode.fragTypeCount = root.fragTypeCount = 1
-        root.info.append( ('standard residues', '%d' % len(list(v.keys()))))
+        root.info.append( ('standard residues', '%d' % len(v.keys())))
         kst = self.kamaji.structureTypes
         if '_incomplete' in kst:
             incomplete = []
@@ -2028,7 +2028,7 @@ class KamajiInterface:
     def getBioPolymerInfo(self, data):
         """ """
         info = []
-        info.append( ('residues', '%d' % len(list(data.keys())) ) )
+        info.append( ('residues', '%d' % len(data.keys()) ) )
         return info
         
 
@@ -2049,10 +2049,10 @@ class KamajiInterface:
             'asn':'N', 'gln': 'Q', 'asp':'D', 'glu':'E', 'lys':'K', 'arg':'R', 'his':'H'}
         info = []
         name = []
-        for idx, res in list(data['data'].items()):
+        for idx, res in data['data'].items():
             name.append( AaaToA.setdefault(res['name'].lower(), 'X'))
         info.append( ('name' , ''.join(name)) )
-        info.append( ('lenght' , len(list(data['data'].keys())) ))
+        info.append( ('lenght' , len(data['data'].keys()) ))
         return info
 
     def getNucleicInfo(self, data):
@@ -2073,33 +2073,33 @@ class KamajiInterface:
         root.fragType = 'ligand'
         root.fragTypeCount = 0
         ligTypes = []
-        for group, data in list(v.items()):
+        for group, data in v.items():
             groupNode = root.add('%s (%%s)' % (names[group]))
             root.fragTypeCount += 1
             if group == 'short_peptide': # 
                 ligTypes.append(names[group])
-                for lId, lData in list(data.items()):
+                for lId, lData in data.items():
                     groupNode.fragType = 'short'
                     groupNode.fragTypeCount = 1
                     name = lData['info']['sequence']
                     n = groupNode.add(name)
-                    n.selection = [x['num'] for x in list(lData['data'].values()) ]
+                    n.selection = [x['num'] for x in lData['data'].values() ]
                     n.info = self.getPeptideInfo(lData)
                     n.fragType = 'short'
                     n.fragTypeCount = 1
             elif group == 'short_nucleic':
                 ligTypes.append(names[group])
-                for lId, lData in list(data.items()):
+                for lId, lData in data.items():
                     groupNode.fragType = 'short'
                     groupNode.fragTypeCount = 1
                     name = lData['info']['sequence']
                     n = groupNode.add(name)
-                    n.selection = [x['num'] for x in list(lData['data'].values()) ]
+                    n.selection = [x['num'] for x in lData['data'].values() ]
                     n.info = self.getNucleicInfo(lData)
                     n.fragType = 'short'
                     n.fragTypeCount = 1
             elif group == 'sugar':
-                for lId, lData in list(data.items()):
+                for lId, lData in data.items():
                     groupNode.fragType = 'sugar'
                     groupNode.fragTypeCount = 1
                     name = '%s-%s' % ( lData['name'], lData['num'])
@@ -2109,7 +2109,7 @@ class KamajiInterface:
                     n.fragType = 'sugar'
                     n.fragTypeCount = 1
             elif group == 'lipid':
-                for lId, lData in list(data.items()):
+                for lId, lData in data.items():
                     groupNode.fragType = 'lipid'
                     groupNode.fragTypeCount = 1
                     name = '%s-%s' % ( lData['name'], lData['num'])
@@ -2119,7 +2119,7 @@ class KamajiInterface:
                     n.fragType = 'lipid'
                     n.fragTypeCount = 1
             elif group == 'generic':
-                for lId, lData in list(data.items()):
+                for lId, lData in data.items():
                     groupNode.fragType = 'ligand' # 'generic'
                     groupNode.fragTypeCount = 1
                     n = groupNode.add( '%s-%s' % (lData['name'], lData['num']) )
@@ -2134,7 +2134,7 @@ class KamajiInterface:
     def getResNum(self, data):
         """ """
         res = []
-        for rId,rInfo in list(data.items()):
+        for rId,rInfo in data.items():
             res.append(rInfo['num'])
         return res
             
@@ -2252,7 +2252,7 @@ if __name__ == '__main__':
         else:
             spacer = ""
             curve = ""
-        print("\n"+spacer,"\n"+spacer, end=' ')
+        print "\n"+spacer,"\n"+spacer,
         #print "\n"+curve,
 
         #print "SPACER[%s]" % spacer
@@ -2261,11 +2261,11 @@ if __name__ == '__main__':
                 if k in exclude:
                     continue
                 v = data[k]
-                print("\n%s--[ %s ]" % (curve, k), end=' ')
+                print "\n%s--[ %s ]" % (curve, k),
                 if isinstance(v, dict) or isinstance(v,list):
                     printExpand(v, indent+1, exclude)
                 else:
-                    print("--> ( %s )" % v, end=' ')
+                    print "--> ( %s )" % v,
         elif isinstance(data, list):
             for v in data:
                 if v in exclude:
@@ -2274,7 +2274,7 @@ if __name__ == '__main__':
                     printExpand(v, indent+1, exclude)
                 else:
                     #print "(",v,")"
-                    print("%s" % v, end=' ')
+                    print "%s" % v,
                     #print "%s" % (" "*indent), v,
 
 

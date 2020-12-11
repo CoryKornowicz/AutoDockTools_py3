@@ -32,22 +32,19 @@
 # 
 # $Id: __init__.py,v 1.2.2.2 2017/11/10 18:49:08 sanner Exp $
 #
-
+from __future__ import absolute_import
 import openbabel
 import mmtf as MMTF
 from .babelElements import babel_elements as elements
 
-for k,v in list(elements.items()):
+for k,v in elements.items():
    if len(k)==2:
        elements[k.upper()] = v
 
 import os
 import prody
 # put error as default level in ProDyDist/prody/__init__.py
-# prody.confProDy(verbosity='error', auto_secondary=True, silent=True)
-# New Syntax
-prody.confProDy(verbosity='error', auto_secondary=True)
-
+prody.confProDy(verbosity='error', auto_secondary=True, silent=True)
 from .molecule import Molecule, MultiMolecule
 
 _KNOW_FORMATS = ["pdb", "pdbqt", "ent", "pdb.gz",
@@ -92,7 +89,7 @@ def readMMTF(filename, decoder=None):
 def readWithPrody(filename, header=False, model=None):
     #prody.confProDy(verbosity='error')
     if not os.path.exists(filename):
-        raise AssertionError("%s doesn't exist" %filename)
+        raise AssertionError , "%s doesn't exist" %filename
     ext = os.path.splitext(filename)[1]
     name = os.path.splitext(os.path.split(filename)[1])[0]
     if ext.lower()=='.pdb':
@@ -191,9 +188,9 @@ def findHbAcceptorsDonors(mol):
     for n, atom in enumerate(mol._ag):
         atype = atom.getType().strip()
         index = atom.getIndex()
-        if atype in acceptor_types:
+        if acceptor_types.has_key(atype):
             acceptors[n] = True
-        if atype in donor_types:
+        if donor_types.has_key(atype):
            hasH = False
            for neighbor in atom.iterBonded():
                if neighbor.getType()=='HD':

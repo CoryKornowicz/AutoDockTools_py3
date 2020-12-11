@@ -271,8 +271,8 @@ mydefs['PII'] = {'Dk':1, 'Dl':1, 'Ek':1, 'El':1}
 helix  = ('De', 'Df', 'Ed', 'Ee', 'Ef', 'Fd', 'Fe')
 strand = ('Bj', 'Bk', 'Bl', 'Cj', 'Ck', 'Cl', 'Dj', 'Dk', 'Dl')
 
-pat_helix  = "(%s){5,}" % string.join(["(%s)" % x for x in helix], '|')
-pat_strand = "(%s){3,}" % string.join(["(%s)" % x for x in strand], '|')
+pat_helix  = "(%s){5,}" % string.join(map(lambda x: "(%s)" % x, helix), '|')
+pat_strand = "(%s){3,}" % string.join(map(lambda x: "(%s)" % x, strand), '|')
 
 mydefs['HELIX'] = re.compile(pat_helix)
 mydefs['STRAND'] = re.compile(pat_strand)
@@ -335,8 +335,8 @@ mydefs['PII'] = {'M':1, 'R':1}
 helix  = ('O', 'P')
 strand = ('L', 'G', 'F', 'A')
 
-pat_helix  = "(%s){5,}" % string.join(["(%s)" % x for x in helix],  '|')
-pat_strand = "(%s){3,}" % string.join(["(%s)" % x for x in strand], '|')
+pat_helix  = "(%s){5,}" % string.join(map(lambda x: "(%s)" % x, helix),  '|')
+pat_strand = "(%s){3,}" % string.join(map(lambda x: "(%s)" % x, strand), '|')
 
 mydefs['HELIX'] = re.compile(pat_helix)
 mydefs['STRAND'] = re.compile(pat_strand)
@@ -390,11 +390,11 @@ def rc_codes(chain, phi=None, psi=None, ome=None, mcodes=None):
     applies to the chain, as determined by res_rc.
     """
     if not mcodes: mcodes = default
-    n = list(range(len(chain)))
-    if phi is None: phi = list(map(chain.phi, n))
-    if psi is None: psi = list(map(chain.psi, n))
-    if ome is None: ome = list(map(chain.omega, n))
-    return list(map(lambda x, y, z: res_rc(x, y, z, mcodes), phi, psi, ome))
+    n = range(len(chain))
+    if phi is None: phi = map(chain.phi, n)
+    if psi is None: psi = map(chain.psi, n)
+    if ome is None: ome = map(chain.omega, n)
+    return map(lambda x, y, z: res_rc(x, y, z, mcodes), phi, psi, ome)
 
 def rc_ss(chain, phi=None, psi=None, ome=None, mcodes=None):
     """rc_ss(chain, phi, psi, ome) - calculate secondary structure
@@ -417,11 +417,11 @@ def rc_ss(chain, phi=None, psi=None, ome=None, mcodes=None):
     if phi is None:
         chain.gaps()
         nres = len(chain)
-        phi = list(map(chain.phi, range(nres)))
+        phi = map(chain.phi, xrange(nres))
     else:
         nres = len(chain)
-    if psi is None: psi = list(map(chain.psi, range(nres)))
-    if ome is None: ome = list(map(chain.omega, range(nres)))
+    if psi is None: psi = map(chain.psi, xrange(nres))
+    if ome is None: ome = map(chain.omega, xrange(nres))
 
     codes = rc_codes(chain, phi, psi, ome, mcodes)
 
@@ -431,14 +431,14 @@ def rc_ss(chain, phi=None, psi=None, ome=None, mcodes=None):
 
     is_PII = PII.has_key
 
-    for i in range(nres-1):
+    for i in xrange(nres-1):
         code = codes[i]
         if is_PII(code):
             sst[i] = 'P'
 
     is_turn = TURNS.has_key
 
-    for i in range(nres-1):
+    for i in xrange(nres-1):
         code = codes[i] + codes[i+1]
         if is_turn(code):
             sst[i] = sst[i+1] = 'T'
@@ -479,7 +479,7 @@ def _rc_find(codes, pattern, mcodes=None):
 
     try:
         while 1:
-            mat = next(it)
+            mat = it.next()
             matches.append((mat.start()/CODE_LENGTH, mat.end()/CODE_LENGTH))
     except StopIteration:
         pass
@@ -550,16 +550,16 @@ class TypedList:
         if self._func(el):
             self.elements.append(el)
         else:
-            raise TypeError('Element to be added to list has incorrect type.')
+            raise TypeError, 'Element to be added to list has incorrect type.'
 
     def __len__(self): return len(self.elements)
 
     def __repr__(self):
         return "%s(%s, %s)" % (self.__class__, self._func.__name__,
-                              repr(self.elements))
+                              `self.elements`)
 
     def __str__(self):
-        return repr(self.elements)
+        return `self.elements`
     
     def __getitem__(self, i): return self.elements[i]
     
@@ -567,7 +567,7 @@ class TypedList:
         if self._func(v):
             self.elements[i] = v
         else:
-            raise TypeError('Item not of correct type in __setitem__')
+            raise TypeError, 'Item not of correct type in __setitem__'
 
     def __delitem__(self, i): del self.elements[i]
 
@@ -585,10 +585,10 @@ class TypedList:
 
     def __add__(self, other):
         if not hasattr(other, '_is_a_typed_list'):
-            raise TypeError('List to be concatenated not instance of %s' %\
-                  self.__class__)
-        if self._func != other._func:
-            raise TypeError('Lists to be added not of same type')
+            raise TypeError,'List to be concatenated not instance of %s' %\
+                  self.__class__
+        if self._func <> other._func:
+            raise TypeError, 'Lists to be added not of same type'
         new = self.__class__(self._func)
         new.elements = self.elements + other.elements
         return new
@@ -599,7 +599,7 @@ class TypedList:
             new.elements = self.elements * other
             return new
         else:
-            raise TypeError("can't multiply list with non-int")
+            raise TypeError, "can't multiply list with non-int"
         
     __rmul__ = __mul__
 
@@ -608,7 +608,7 @@ class TypedList:
         for el in self.elements:
             new.elements.append(el.__copy__())
         have = new.__dict__.has_key
-        for key in list(self.__dict__.keys()):
+        for key in self.__dict__.keys():
             if not have(key):
                 new.__dict__[key] = copy.deepcopy(self.__dict__[key])
         return new
@@ -616,7 +616,7 @@ class TypedList:
     __deepcopy__ = clone = __copy__
 
     def _alltrue(self, els):
-        return len(els) == len([_f for _f in map(self._func, els) if _f])
+        return len(els) == len(filter(None, map(self._func, els)))
 
     def sort(self): self.elements.sort()
 
@@ -632,7 +632,7 @@ class TypedList:
                 for el in els:
                     self.elements.append(el)
         else:
-            raise TypeError('One or more elements of list not of correct type')
+            raise TypeError, 'One or more elements of list not of correct type'
                     
     def pop(self):
         if HAVE_POP:
@@ -650,13 +650,13 @@ class TypedList:
         if self._func(el):
             self.elements.insert(pos, el)
         else:
-            raise TypeError('Item not of correct type in insert')
+            raise TypeError, 'Item not of correct type in insert'
 
     def indices(self, len=len):
-        return range(len(self.elements))
+        return xrange(len(self.elements))
 
     def reverse_indices(self, len=len):
-        return range(len(self.elements)-1, -1, -1)
+        return xrange(len(self.elements)-1, -1, -1)
 
     
     
@@ -671,7 +671,7 @@ class molResidue(TypedList):
     def __init__(self, name='', atoms=None, **kw):
         TypedList.__init__(self, is_atom, atoms)
         self.name = name
-        for key, value in list(kw.items()):
+        for key, value in kw.items():
             setattr(self, key, value)        
         
     def num_atoms(self):
@@ -722,7 +722,7 @@ class molResidue(TypedList):
         if len(names)==0:
             atoms = self.elements
         else:
-            atoms = self.atoms_with_name(*names)
+            atoms = apply(self.atoms_with_name, names)
 
         na = len(atoms)
         if na == 0: return
@@ -739,7 +739,7 @@ class molResidue(TypedList):
         return a
 
     def assign_radii(self):
-        raise AttributeError('Should be defined in specialized class')
+        raise AttributeError, 'Should be defined in specialized class'
 
     def type(self):
         return 'residue'
@@ -750,7 +750,7 @@ class molChain(TypedList):
     def __init__(self, name='', residues=None, **kw):
         self.name = name
         TypedList.__init__(self, is_residue, residues)
-        for key, value in list(kw.items()):
+        for key, value in kw.items():
             setattr(self, key, value)        
 
 
@@ -818,13 +818,13 @@ class molChain(TypedList):
     def delete_atoms_with_name(self, *names):
         """delete atoms in residue with specified names"""
         for res in self.elements:
-            res.delete_atoms_with_name(*names)
+            apply(res.delete_atoms_with_name, names)
 
     def atoms_not_with_name(self, *names):
         """returns atoms in residue excluding specified names"""
         ret = []
         for res in self.elements:
-            ret[len(ret):] = res.atoms_not_with_name(*names)
+            ret[len(ret):] = apply(res.atoms_not_with_name, names)
         return ret
 
     def atom_coordinates(self, *names):
@@ -838,8 +838,8 @@ class molChain(TypedList):
                     if atom.name in names:
                         coords.append(atom.coords())
         else:
-            atoms = self.atoms_with_name(*names)
-            coords = [a.coords() for a in atoms]
+            atoms = apply(self.atoms_with_name, names)
+            coords = map(lambda a:a.coords(), atoms)
         if HAVE_NUMPY:
             return Numeric.array(coords)
         else:
@@ -864,19 +864,19 @@ class molChain(TypedList):
         
         delete = []
 
-        for i in range(len(chain)):
+        for i in xrange(len(chain)):
             residue = chain[i]
             rid = (residue.idx, residue.icode)
 
-            for j in range(len(residue)):
+            for j in xrange(len(residue)):
                 atom = residue[j]
                 anam = atom.name
 
                 try:
                     acnt = AtomCount[rid][anam]
                 except KeyError:
-                    print("Unable to locate %s %s %s in present dictionary."%\
-                          (rid[0], rid[1], anam))
+                    print "Unable to locate %s %s %s in present dictionary."%\
+                          (rid[0], rid[1], anam)
                     return
 
                 if acnt == 1:
@@ -912,7 +912,7 @@ class molChain(TypedList):
     the sequence itself.  When delete_hetero is run, these atoms
     will be preserved.
     """
-        for i in range(self.num_residues()):
+        for i in xrange(self.num_residues()):
             if hasattr(self[i], 'chain_het') and hasattr(self[i], 'het'):
                 delattr(self[i], 'het')
                 
@@ -923,12 +923,12 @@ class molChain(TypedList):
     structure.  This include waters, heme groups, as well as residues
     with nonstandard structures
     """
-        for i in range(self.num_residues()-1, -1, -1):
+        for i in xrange(self.num_residues()-1, -1, -1):
             if hasattr(self[i], 'het'):
                 del self[i]
 
     def delete_waters(self):
-        for i in range(self.num_residues()-1, -1, -1):
+        for i in xrange(self.num_residues()-1, -1, -1):
             if self[i].name == 'HOH':
                 del self[i]
 
@@ -1014,13 +1014,13 @@ class molMol(TypedList):
     def delete_atoms_with_name(self, *names):
         """delete atoms in assembly with specified names"""
         for chain in self.elements:
-            chain.delete_atoms_with_name(*names)
+            apply(chain.delete_atoms_with_name, names)
 
     def atoms_not_with_name(self, *names):
         """returns atoms in assembly excluding specified names"""
         ret = []
         for chain in self.elements:
-            ret[len(ret):] = chain.atoms_not_with_name(*names)
+            ret[len(ret):] = apply(chain.atoms_not_with_name, names)
         return ret
 
 
@@ -1033,8 +1033,8 @@ class molMol(TypedList):
                     for atom in res.elements:
                         coords.append(atom.coords())
         else:
-            atoms = self.atoms_with_name(*names)
-            coords = [a.coords() for a in atoms]
+            atoms = apply(self.atoms_with_name, names)
+            coords = map(lambda a:a.coords(), atoms)
             del atoms
         if HAVE_NUMPY:
             return Numeric.array(coords)
@@ -1178,7 +1178,7 @@ def write_pdb(myMol, f, renum=0, seq=None, pack=pack_pdb_line):
     """
 
     if not is_mol(myMol):
-        print("This function only works for biomol.mol types.")
+        print "This function only works for biomol.mol types."
         return
 
     default_seq = 1
@@ -1260,7 +1260,7 @@ def write_sequences(chain, f):
     elem = 0
     fmt = 'SEQRES  %2i %1s %4i  ' 
 
-    for i in range(nr):
+    for i in xrange(nr):
         if elem == 0:
             f.write(fmt % (sn, nm, nr))
             sn = sn + 1
@@ -1290,7 +1290,7 @@ class Atom3d:
         self.y = float(y)
         self.z = float(z)
         if cnf:
-            for key, value in list(cnf.items()):
+            for key, value in cnf.items():
                 self.__dict__[key] = value
 
     def __repr__(self):
@@ -1305,7 +1305,7 @@ class Atom3d:
 
     def set_coords(self, x, y=None, z=None):
         if y is None:
-            self.x, self.y, self.z = list(map(float, x))
+            self.x, self.y, self.z = map(float, x)
         else:
             self.x, self.y, self.z = float(x), float(y), float(z)
 
@@ -1340,7 +1340,7 @@ class Atom3d:
 
     def distance(self, other, sqrt=math.sqrt):
         if not hasattr(other, '_is_an_atom3d'):
-            raise TypeError('distance argument must be Atom3d type')
+            raise TypeError, 'distance argument must be Atom3d type'
         
         return sqrt( (self.x - other.x)**2 +
                      (self.y - other.y)**2 +
@@ -1348,7 +1348,7 @@ class Atom3d:
 
     def sqr_distance(self, other):
         if not hasattr(other, '_is_an_atom3d'):
-            raise TypeError('sqr_distance argument must be Atom3d type')
+            raise TypeError, 'sqr_distance argument must be Atom3d type'
 
         return (self.x - other.x)**2 + \
                (self.y - other.y)**2 + \
@@ -1357,7 +1357,7 @@ class Atom3d:
     def angle(self, a, b, sqrt=math.sqrt, acos=math.acos):
         if not hasattr(a, '_is_an_atom3d') or \
            not hasattr(b, '_is_an_atom3d'):
-            raise TypeError('angle arguments must be Atom3d type')
+            raise TypeError, 'angle arguments must be Atom3d type'
 
         x1, y1, z1 = self.x - a.x, self.y - a.y, self.z - a.z
         x2, y2, z2 = b.x - a.x, b.y - a.y, b.z - a.z
@@ -1365,7 +1365,7 @@ class Atom3d:
         v22 = x2**2 + y2**2 + z2**2
         
         if (v11 == 0.0 or v22 == 0.0):
-            raise ValueError('Null vector in angle')
+            raise ValueError, 'Null vector in angle'
         
         v12 = x1*x2 + y1*y2 + z1*z2
         
@@ -1383,7 +1383,7 @@ class Atom3d:
         if not hasattr(a, '_is_an_atom3d') or \
            not hasattr(b, '_is_an_atom3d') or \
            not hasattr(c, '_is_an_atom3d'):
-            raise TypeError('torsion arguments must be Atom3d type')
+            raise TypeError, 'torsion arguments must be Atom3d type'
         
         v12x, v12y, v12z = self.x - a.x, self.y - a.y, self.z - a.z
         v32x, v32y, v32z = b.x - a.x, b.y - a.y, b.z - a.z
@@ -1507,7 +1507,7 @@ def get_sequences(file):
     while line[:6] == 'SEQRES':
         chain = line[11]
         residues = string.split(line[19:71])
-        if chain not in sequences:
+        if not sequences.has_key(chain):
             sequences[chain] = []
         sequences[chain].extend(residues)
         line = ff.readline()
@@ -1695,7 +1695,7 @@ def read_pdb(f, as_protein=0, as_rna=0, as_dna=0, all_models=0,
             pass
                 
         if line[:6] == 'COMPND':
-            if string.find(line, 'MOL_ID') != -1: continue
+            if string.find(line, 'MOL_ID') <> -1: continue
             new_mol.name = new_mol.name + string.strip(line[10:72]) + ' '
         if line[:4] == 'ATOM' or line[:4] == 'HETA' or line[:5] == 'MODEL':
             break
@@ -1714,7 +1714,7 @@ def read_pdb(f, as_protein=0, as_rna=0, as_dna=0, all_models=0,
         if key == 'ATOM' or key == 'HETA':
             t = unpack(line)
 
-            if t[UP_CHAINID] != old_chain:
+            if t[UP_CHAINID] <> old_chain:
                 old_chain = t[UP_CHAINID]
                 new_chain = Chain(old_chain, present={}, model=modnum)
                 AppendResidue = new_chain.elements.append
@@ -1723,7 +1723,7 @@ def read_pdb(f, as_protein=0, as_rna=0, as_dna=0, all_models=0,
                 old_res = None
                 old_icode = None
                 
-            if t[UP_RESSEQ] != old_res or t[UP_ICODE] != old_icode:
+            if t[UP_RESSEQ] <> old_res or t[UP_ICODE] <> old_icode:
                 old_res = t[UP_RESSEQ]
                 old_icode = t[UP_ICODE]
                 new_res = Residue(t[UP_RESNAME], idx=old_res, icode=old_icode)
@@ -1743,10 +1743,10 @@ def read_pdb(f, as_protein=0, as_rna=0, as_dna=0, all_models=0,
                     
                 AppendAtom = new_res.elements.append
                 AppendResidue(new_res)
-                if (old_res, old_icode) not in AtomsPresent:
+                if not AtomsPresent.has_key((old_res, old_icode)):
                     AtomsPresent[(old_res, old_icode)] = {}
 
-            if t[UP_NAME] in AtomsPresent[(old_res, old_icode)]:
+            if AtomsPresent[(old_res, old_icode)].has_key(t[UP_NAME]):
                 AtomsPresent[(old_res, old_icode)][t[UP_NAME]] = \
                      AtomsPresent[(old_res, old_icode)][t[UP_NAME]] + 1
             else:
@@ -1824,7 +1824,7 @@ def _read_chain(f, as_protein=0, as_rna=0, as_dna=0, unpack=unpack_pdb_line,
         key = line[:4]
         if key == 'ATOM' or key == 'HETA':
             t = unpack(line)
-            if t[UP_RESSEQ] != old_res or t[UP_ICODE] != old_icode:
+            if t[UP_RESSEQ] <> old_res or t[UP_ICODE] <> old_icode:
                 old_res = t[UP_RESSEQ]
                 old_icode = t[UP_ICODE]
                 new_res = Residue(old_res, idx=t[UP_RESSEQ], icode=t[UP_ICODE])
@@ -1853,7 +1853,7 @@ class Protein(molChain):
         res = self.elements
         for i in self.reverse_indices():
             tmp = len(res[i].atoms_with_name('N', 'CA', 'C'))
-            if tmp != 3:
+            if tmp <> 3:
                 del res[i]
 
 
@@ -1868,7 +1868,7 @@ class Protein(molChain):
     """
         residues = self.elements
         dlist = []
-        for i in range(len(self)-1):
+        for i in xrange(len(self)-1):
             ca1 = residues[i].atoms_with_name('CA')
             if residues[i].name == 'ACE':
                 ca1 = residues[i].atoms_with_name('CH3')
@@ -1976,7 +1976,7 @@ class Protein(molChain):
             return 999.99
         
         try:
-            a, b, c, d = res.atoms_with_name(*atoms)
+            a, b, c, d = apply(res.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -1989,7 +1989,7 @@ class Protein(molChain):
             return 999.99
         
         try:
-            a, b, c, d = res.atoms_with_name(*atoms)
+            a, b, c, d = apply(res.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2002,7 +2002,7 @@ class Protein(molChain):
             return 999.99
         
         try:
-            a, b, c, d = res.atoms_with_name(*atoms)
+            a, b, c, d = apply(res.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2015,7 +2015,7 @@ class Protein(molChain):
             return 999.99
         
         try:
-            a, b, c, d = res.atoms_with_name(*atoms)
+            a, b, c, d = apply(res.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2023,7 +2023,7 @@ class Protein(molChain):
 
     def backbone_atoms(self, *ids):
         if not len(ids):
-            ids = range(len(self))
+            ids = xrange(len(self))
 
         bb_atoms = ('N', 'CA', 'C', 'O')
         residues = []
@@ -2048,14 +2048,14 @@ class Protein(molChain):
             return self.phi(i), self.psi(i), self.omega(i), self.chi1(i),\
                    self.chi2(i), self.chi3(i), self.chi4(i)
         else:
-            n = list(range(len(self)))
-            return list(map(self.phi, n)),\
-                   list(map(self.psi, n)),\
-                   list(map(self.omega, n)),\
-                   list(map(self.chi1, n)),\
-                   list(map(self.chi2, n)),\
-                   list(map(self.chi3, n)),\
-                   list(map(self.chi4, n))
+            n = range(len(self))
+            return map(self.phi, n),\
+                   map(self.psi, n),\
+                   map(self.omega, n),\
+                   map(self.chi1, n),\
+                   map(self.chi2, n),\
+                   map(self.chi3, n),\
+                   map(self.chi4, n)
 
 
     def pross(self, phi=None, psi=None, ome=None, mcodes=None):
@@ -2069,10 +2069,10 @@ class Protein(molChain):
 
     def sequence(self, one=0):
         n = self.num_residues()
-        seq = list(map(getattr, self.elements, ('name',)*n))
+        seq = map(getattr, self.elements, ('name',)*n)
         if one:
             get_one = ONE_LETTER_CODES.get
-            seq = list(map(get_one, seq, 'X'*n))
+            seq = map(get_one, seq, 'X'*n)
         return seq
             
 
@@ -2084,7 +2084,7 @@ class AminoAcid(molResidue):
             return 999.99
         
         try:
-            a, b, c, d = self.atoms_with_name(*atoms)
+            a, b, c, d = apply(self.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2096,7 +2096,7 @@ class AminoAcid(molResidue):
             return 999.99
         
         try:
-            a, b, c, d = self.atoms_with_name(*atoms)
+            a, b, c, d = apply(self.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2108,7 +2108,7 @@ class AminoAcid(molResidue):
             return 999.99
         
         try:
-            a, b, c, d = self.atoms_with_name(*atoms)
+            a, b, c, d = apply(self.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2120,7 +2120,7 @@ class AminoAcid(molResidue):
             return 999.99
         
         try:
-            a, b, c, d = self.atoms_with_name(*atoms)
+            a, b, c, d = apply(self.atoms_with_name, atoms)
         except:
             return 999.99
         else:
@@ -2169,7 +2169,7 @@ def run(file,mcode):
     angfile = sys.stdout
 
     for chain in mol:
-        if chain.type() != 'protein': continue
+        if chain.type() <> 'protein': continue
         chain.gaps()
         angfile.write('Chain: %s\n' % chain.name)
         angfile.write('          SS MS    phi      psi     omega     chi1     chi2     chi3     chi4\n')
@@ -2188,7 +2188,7 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) < 1:
-        print(USAGE)
+        print USAGE
         sys.exit()
 
     # Default is finegrained mesostates

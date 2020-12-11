@@ -79,10 +79,10 @@ def MMTFtoPrody(decoder, name='NoName'):
         bonds = np.array(decoder.bond_atom_list, 'i').reshape(-1,2).tolist()
         bo = decoder.bond_order_list.tolist()
         groupOff = 0
-        for chainIndex in range(modelChainCount):#decoder.chains_per_model[modelIndex]):
+        for chainIndex in xrange(modelChainCount):#decoder.chains_per_model[modelIndex]):
             firstAtomsInChain = atomIndex
             nbGroupsInChain = decoder.groups_per_chain[ chainIndex ]
-            for groupIndex in range(nbGroupsInChain):
+            for groupIndex in xrange(nbGroupsInChain):
                 group = groupList[ decoder.group_type_list[groupOff+groupIndex ] ]
                 nbAtoms = len(group['atomNameList'])
                 atomnames[atomIndex:atomIndex+nbAtoms] = group['atomNameList']

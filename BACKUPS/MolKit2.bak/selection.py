@@ -163,7 +163,7 @@ class Selection(ProdySelection):
                        bonds[0].append(i) 
                     break
                 if i<j:
-                    if j in inSet: # check if other atom is in this selection
+                    if inSet.has_key(j): # check if other atom is in this selection
                         if bo is None:
                             bonds[1].append( (i,j) )
                         else:
@@ -350,7 +350,7 @@ class Selection(ProdySelection):
                 # build the mapping such that mapping[i] wil be index of i
                 # in new set
                 maxi = 0
-                for i in range(len(a1)):
+                for i in xrange(len(a1)):
                     if a1[i]!=-1:
                         mapping[i] = maxi
                         maxi += 1
@@ -424,7 +424,7 @@ class Selection(ProdySelection):
                 # build the mapping such that mapping[i] wil be index of i
                 # in new set
                 maxi = 0
-                for i in range(len(a1)):
+                for i in xrange(len(a1)):
                     if a1[i]!=-1:
                         mapping[i] = maxi
                         maxi += 1
@@ -510,14 +510,14 @@ class SelectionSet(list, TreeObject):
 
         if isinstance(other, SelectionSet):
             newSels = []
-            for ag, sel in list(self._agDict.items()):
+            for ag, sel in self._agDict.items():
                 otherSel = other._agDict.get(ag, None)
                 if otherSel:
                     newSels.append(sel | otherSel)
                 else:
                     newSels.append(sel.copy())
 
-            for otherAg, otherSel in list(other._agDict.items()):
+            for otherAg, otherSel in other._agDict.items():
                 sel = self._agDict.get(otherAg, None)
                 if not sel:
                     newSels.append(otherSel.copy())
@@ -534,7 +534,7 @@ class SelectionSet(list, TreeObject):
 
         if isinstance(other, SelectionSet):
             newSels = []
-            for ag, sel in list(self._agDict.items()):
+            for ag, sel in self._agDict.items():
                 otherSel = other._agDict.get(ag, None)
                 if otherSel:
                     sel = sel & otherSel
@@ -554,7 +554,7 @@ class SelectionSet(list, TreeObject):
         
         if isinstance(other, SelectionSet):
             newSels = []
-            for ag, sel in list(self._agDict.items()):
+            for ag, sel in self._agDict.items():
                 otherSel = other._agDict.get(ag, None)
                 if otherSel:
                     sel = sel - otherSel
@@ -704,9 +704,9 @@ class SelectionSet(list, TreeObject):
                 else:
                     flags[key] = concatenate((flags[key], oldag.getFlags(key)[indices]))
         ag._setCoords(coords, overwrite=True)
-        for key, data in list(dataFields.items()):
+        for key, data in dataFields.items():
             ag.setData(key, data)
-        for key, data in list(flags.items()):
+        for key, data in flags.items():
             ag._setFlags(key, data)
             
         for i, sel in enumerate(self):
@@ -734,7 +734,7 @@ class SelectionSet(list, TreeObject):
                     # build the mapping such that mapping[i] wil be index of i
                     # in new set
                     maxi = maxInd
-                    for i in range(len(a1)):
+                    for i in xrange(len(a1)):
                         if a1[i]!=-1:
                             mapping[i] = maxi
                             maxi += 1
@@ -775,7 +775,7 @@ def getMolsFromName(molName, molSet):
     for mol in molSet:
         if prog.match(mol.name):
             mols[mol] = True
-    return list(mols.keys())
+    return mols.keys()
 
 def selector(selectionStr, molSet):
 
@@ -793,6 +793,6 @@ def selector(selectionStr, molSet):
         else:
             args = tokens[1]
 
-        for mol in list(mols.keys()):
+        for mol in mols.keys():
             selections.append( mol.select(*args) )
     return selections

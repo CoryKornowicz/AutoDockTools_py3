@@ -13,18 +13,20 @@
 #                                                                                                  #
 # ##################################################################################################
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='AutoDockTools_py3',
-    version='1.5.7',
-    packages=['MolKit', 'MolKit.data', 'MolKit.pdb2pqr', 'MolKit.pdb2pqr.src', 'MolKit.pdb2pqr.propka',
-              'MolKit.pdb2pqr.pdb2pka', 'MolKit.pdb2pqr.pdb2pka.substruct', 'MolKit.pdb2pqr.pdb2pka.ligandclean',
-              'MolKit.pdb2pqr.extensions', 'PyBabel', 'mglutil', 'mglutil.math', 'mglutil.util',
-              'AutoDockTools', 'AutoDockTools.Utilities24'],
+    version='1.6.0alpha',
+    packages=find_packages(),
     url='https://github.com/Valdes-Tresanco-MS/AutoDockTools_py3',
     license='MGLTools LICENSE',
     author='PhD Student MS Valdes-Trasanco and PhD Student ME Valdes-Tresanco ',
     author_email='bioinfobrothers@gmail.com',
     description='Translation of ADT to python3.7'
 )
+
+# packages=['MolKit', 'MolKit.data', 'MolKit.pdb2pqr', 'MolKit.pdb2pqr.src', 'MolKit.pdb2pqr.propka',
+#               'MolKit.pdb2pqr.pdb2pka', 'MolKit.pdb2pqr.pdb2pka.substruct', 'MolKit.pdb2pqr.pdb2pka.ligandclean',
+#               'MolKit.pdb2pqr.extensions', 'PyBabel', 'mglutil', 'mglutil.math', 'mglutil.util',
+#               'AutoDockTools', 'AutoDockTools.Utilities24']

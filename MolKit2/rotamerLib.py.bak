@@ -102,7 +102,7 @@ Institute for Cancer Research, Fox Chase Cancer Center
             name = words[0]
             atomsInChiAngle = words[1:5]
             atomsMovedByChiAngle = words[5:]
-            if name in angdef:
+            if angdef.has_key(name):
                 angdef[name].append([atomsInChiAngle, atomsMovedByChiAngle])
             else:
                 angdef[name] = [[atomsInChiAngle, atomsMovedByChiAngle]]
@@ -126,7 +126,7 @@ Institute for Cancer Research, Fox Chase Cancer Center
             for i in range(number):
                 chi_angles.append(float(words[11 + i*2]))
                 stdev.append(float(words[12+ i*2]))
-            if name in rotlib:
+            if rotlib.has_key(name):
                 rotlib[name].append(chi_angles)
                 angledev[name].append(stdev)                
             else:
@@ -193,10 +193,10 @@ Each list contains a list of CHI angles deviations for a given rotamer
 if __name__=='__main__':
     lib = RotamerLib()
     for name in lib.residueNames:
-        print(name, lib.nbRotamers(name))
+        print name, lib.nbRotamers(name)
 
-    print('GLY', lib.nbRotamers('Gly'))
-    print('ALA', lib.nbRotamers('ala'))
+    print 'GLY', lib.nbRotamers('Gly')
+    print 'ALA', lib.nbRotamers('ala')
 
     try:
         lib.nbRotamers('test')
@@ -204,13 +204,13 @@ if __name__=='__main__':
         pass
 
     for chi in lib.getAngleDef('ASN'):
-        print('def: %s Moving: %s'%(chi[0], chi[1]))
+        print 'def: %s Moving: %s'%(chi[0], chi[1])
 
     angles = lib.getAngles('ASN')
     dev = lib.getAnglesDev('ASN')
     for a, d in zip(angles, dev):
-        print("angles: %7.2f %7.2f dev:  %6.2f %6.2f"%(
-            a[0], a[1], d[0], d[1]))
+        print "angles: %7.2f %7.2f dev:  %6.2f %6.2f"%(
+            a[0], a[1], d[0], d[1])
 
     from MolKit2 import Read
     mol = Read('1jff.pdb')
@@ -218,8 +218,8 @@ if __name__=='__main__':
     resAtoms = mol.select('chain A resnum 2')
     angles, resname = mol.measureCHIs('A', 2, lib)
     rotind, diff, rotAngles, rotSigma = mol.closestRotamerCHI(angles, resname, lib)
-    print('angles      ', angles)
-    print('diff        ', diff)
-    print('closest rot', rotind, end=' ')
-    print('rot Angles  ', rotAngles)
-    print('deviation   ', rotSigma)
+    print 'angles      ', angles
+    print 'diff        ', diff
+    print 'closest rot', rotind,
+    print 'rot Angles  ', rotAngles
+    print 'deviation   ', rotSigma

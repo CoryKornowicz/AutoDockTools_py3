@@ -139,13 +139,13 @@ if __name__ == '__main__':
     # single Atom
     mol = p.addHydrogens(mol, atomList=[5,6])
     w.WriteFile(mol, 'test_ATOM-5,6.pdb')    
-    print("Result saved as 'test_ATOM-5,6.pdb'")
+    print "Result saved as 'test_ATOM-5,6.pdb'"
 
 
     # no Ph
     mol = p.addHydrogens(mol)
     w.WriteFile(mol, 'test_NOPH.pdb')    
-    print("Result saved as 'test_NOPH.pdb'")
+    print "Result saved as 'test_NOPH.pdb'"
     # pH 7.4 (since the molecule is the same, pH test must be made last, 'cause it alters atype perception)
 
     mol = p.addHydrogens(mol, pH=7.4)
